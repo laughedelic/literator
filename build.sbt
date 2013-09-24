@@ -1,10 +1,10 @@
 import sbtrelease._
 
-name := "code-to-markdown"
+name := "literator"
 
-description := "code-to-markdown project"
+description := ""
 
-homepage := Some(url("https://github.com/laughedelic/code-to-markdown"))
+homepage := Some(url("https://github.com/laughedelic/literator"))
 
 // organization := "ohnosequences"
 
@@ -19,8 +19,8 @@ scalaVersion := "2.10.2"
 publishMavenStyle := true
 
 // for publishing you need to set `s3credentials`
-// publishTo <<= (isSnapshot, s3credentials) { 
-//                 (snapshot,   credentials) => 
+// publishTo <<= (isSnapshot, s3credentials) {
+//                 (snapshot,   credentials) =>
 //   val prefix = if (snapshot) "snapshots" else "releases"
 //   credentials map S3Resolver(
 //       "Era7 "+prefix+" S3 bucket"
@@ -30,12 +30,9 @@ publishMavenStyle := true
 // }
 
 
-resolvers ++= Seq ( 
-    "Era7 Releases"  at "http://releases.era7.com.s3.amazonaws.com"
-//, "Era7 Snapshots" at "http://snapshots.era7.com.s3.amazonaws.com"
-  , Resolver.url("Era7 ivy releases", url("http://releases.era7.com.s3.amazonaws.com"))(Resolver.ivyStylePatterns)
-//, Resolver.url("Era7 ivy snapshots", url("http://snapshots.era7.com.s3.amazonaws.com"))(Resolver.ivyStylePatterns)
-  )
+// resolvers ++= Seq ( "Era7 Releases"  at "http://releases.era7.com.s3.amazonaws.com" )
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.0.+" % "test"
 
 
 scalacOptions ++= Seq(

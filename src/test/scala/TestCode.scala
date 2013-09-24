@@ -1,27 +1,17 @@
-def source: Parser[List[String ~ String]] =
-  (blockComment ~ code).*
+package laughedelic.tools.tests
 
-  /*
-   |
-   |### Bundles
-   |
-   |This is the heart of Statika library. Bundles...
-   |
-   |  A bundle is supposed to be a lightweight cover for any kind of "modules" of
-   |    a system, such as a tool (program) installer, data, code library, etc.
-   |
-   */
+import laughedelic.tools._
+import org.scalatest._
+import java.io._
+import scala.io._
 
-
-def blockComment: Parser[String] =
-  whiteSpace ~> "/*" ~>
-  (insideComment <~ eol).* ~    // lines
-  (insideComment <~ "*/") ^^ {  // last
-    case lines ~ last => (lines :+ last).mkString("\n").stripMargin
+class SelfDocumentSuite extends FunSuite {
+  test("Run itself on itself's source") {
+    val lit = LiteratorParsers("scala")
+    val src = scala.io.Source.fromFile("src/main/scala/Literator.scala").mkString
+    val md = lit.parse(lit.markdown, src)
+    md map { text =>
+      Some(new PrintWriter("Readme.md")).foreach{p => p.write(text); p.close}
+    }
   }
-
-
-def aa = 3
-
-/*
-  */
+}
