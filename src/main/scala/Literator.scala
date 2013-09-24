@@ -11,7 +11,7 @@ The tool is written in Scala and first of all for Scala, because it doesn't have
 ## Usage
 
 
-### sbt dependency
+### SBT dependency
 
 To use it in Scala project add this dependency to your `build.sbt`:
 
@@ -21,8 +21,28 @@ resolvers += "Era7 releases" at "http://releases.era7.com.s3.amazonaws.com"
 libraryDependencies += "ohnosequences" %% "literator" % "0.1.0"
 ```
 
+Then you can use `literateFile` or `literateDir` functions to generate docs for your sources. See ["Working with files"](#working-with-files) section.
 
-#### Why not docco?
+
+### Command line
+
+To use this tool from command line, download the jar from [releases](https://github.com/laughedelic/literator/releases) and run it like
+
+```bash
+java -jar literator-0.1.0.jar  src/main/scala/  docs/code/
+```
+
+or create a wrapper:
+```bash
+#!/bin/sh
+java -jar literator-0.1.0.jar "$@"
+```
+then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs/code/`.
+
+See ["Command line interface"](#command-line-interface) section for a bit more information.
+
+
+## Why not docco?
 
 Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like tools, which generate htmls from your sources (also using markdown), but there are several reasons, why I don't like them.
 - first of all, there is no normal Scala-clone of such tool and this is not nice, because I want to integrate this into normal release process of the Scala projects I develop;
@@ -44,6 +64,7 @@ We will use parser combinators from the standard Scala library.
 package ohnosequences.tools
 
 import scala.util.parsing.combinator._
+import java.io._
 
 case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
 
@@ -135,14 +156,80 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
 
 }
 
+
+/** ### Working with files
+  */
+object Literator {
+
+  // TODO: determine language from the file extension
+  val literator = LiteratorParsers("scala")
+
+  // traverses recursively given directory and lists all files
+  def getFileTree(f: File): List[File] =
+    f :: (if (f.isDirectory) f.listFiles.toList.flatMap(getFileTree) 
+          else List())
+
+  def writeFile(file: String, text: String) = {
+    Some(new PrintWriter(file)).foreach{p => p.write(text); p.close}
+  }
+
+  /*` This is the key function. It takes a source file, tries to parse it
+    ` and either outputs the result, or writes it to the specified destination. 
+    */
+  def literateFile(f: File, destName: String = ""): literator.ParseResult[String] = {
+    val src = scala.io.Source.fromFile(f).mkString
+
+    val result = literator.parseAll(literator.markdown, src)
+    result map {
+      if (destName.isEmpty) print 
+      else { text =>
+        val destDir = new File(destName).getParentFile
+        // `.getParentFile` may return null if you give it just a file name
+        if (destDir != null && !destDir.exists) destDir.mkdirs
+        writeFile(destName, text) 
+      }
+    }
+    return result
+  }
+
+  /*` This function is a wrapper, convenient for projects. It takes 
+    ` the base source directory, destination path, then takes each 
+    ` source file, tries to parse it, writes result to the destination
+    ` and returns the list parsing results.
+    ` Note, that it preserves the structure of the source directory.
+    */
+  def literateDir(srcBase: File, docsDest: String = ""): List[literator.ParseResult[String]] = {
+    getFileTree(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
+
+      // constructing name for the output file, creating directories, etc.
+      val relative = srcBase.toURI.relativize(f.toURI).getPath.toString
+      val destDir = if (docsDest.isEmpty) "docs" else docsDest
+      val dest = destDir.stripSuffix("/") +"/"+ relative
+      val destName = dest.stripSuffix(".scala")+".md"
+      literateFile(f, destName)
+
+    }
+  }
+
+}
+
 /*
 ### Command line interface
 
-It just takes a file name and outputs the result to stdout.
+* Input: 
+  + a directory with sources or a single file
+  + (optional) destination: path prefix or a file name respectively
+* Output:
+  + if second argument is given, file(s) with documentation
+  + if not, it's set to `docs/` or `stdout` respectively
 */
-object Main extends App {
-  // TODO: determine language from the file extension
-  val lit = LiteratorParsers()
-  val text = scala.io.Source.fromFile(args(0)).mkString
-  lit.parse(lit.markdown, text) map print
+
+object LiteratorCLI extends App {
+  if (args.length < 1) sys.error("Need at least one argument")
+  else {
+    val inp = new File(args(0))
+    val dest = if (args.length > 1) args(1) else ""
+    if (inp.isDirectory) Literator.literateDir(inp, dest)
+    else Literator.literateFile(inp, dest)
+  }
 }
