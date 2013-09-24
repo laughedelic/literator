@@ -1,12 +1,22 @@
 /*
-literator
+Literator
 =========
 
-This is a very simple program, which reads a source code file and transforms block comments into normal text and surrounds code with special syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. So the name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not supported by the language.
+This is a very simple program, which reads a source file and _transforms block comments into normal text and surrounds code with markdown backticks syntax_. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. The name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not supported by the language.
 
 So you can write your code and use markdown syntax in comments (which keeps your sources readable), and then transform it to a markdown document, from which you can generate a nice _html_ or _pdf_ or whatever else, using you [favourite markdown processor](http://johnmacfarlane.net/pandoc/).
 
-The tool is written in Scala and first of all for Scala, because it doesn't have normal support for literate programming.
+The tool is written (in Scala and) first of all for Scala, because it doesn't have normal support for literate programming. But the code can be easily abstracted over language — [open an issue](https://github.com/laughedelic/literator/issues/new), if you want support for something else.
+
+
+#### Why not docco?
+
+Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like tools, which generate htmls from your sources (also using markdown), but there are several reasons, why I don't like them.
+- first of all, there is no normal Scala-clone of such tool and this is not nice, because I want to integrate this into normal release process of the Scala projects I develop;
+- secondly, I want to keep things simple, and I like markdown as an "intermediate" format, for example it's handy to have just markdown documents on github, as it will render them nicely, and then generate from them htmls for a web-site, if needed, using your favourite tool and templates;
+- finally, most of such tools support only one-line comments and ignore block comments, while I want the opposite: write comments as a normal text and have ignored small comments in code;
+- and yes, it's "quick and dirty" — I don't like such things, better to have something simple, but nice.
+
 
 ## Usage
 
@@ -21,7 +31,17 @@ resolvers += "Era7 releases" at "http://releases.era7.com.s3.amazonaws.com"
 libraryDependencies += "ohnosequences" %% "literator" % "0.1.0"
 ```
 
-Then you can use `literateFile` or `literateDir` functions to generate docs for your sources. See ["Working with files"](#working-with-files) section.
+Then you can use `literateFile` or `literateDir` functions to generate docs for your sources. For example:
+
+```scala
+import ohnosequences.tools.Literator._
+
+literateDir(new File("src/main/scala/"), "docs/code/")
+
+literateFile(new File("src/main/scala/Literator.scala"), "Readme.md")
+```
+
+See ["Working with files"](#working-with-files) section for more details.
 
 
 ### Command line
@@ -42,18 +62,9 @@ then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs
 See ["Command line interface"](#command-line-interface) section for a bit more information.
 
 
-## Why not docco?
-
-Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like tools, which generate htmls from your sources (also using markdown), but there are several reasons, why I don't like them.
-- first of all, there is no normal Scala-clone of such tool and this is not nice, because I want to integrate this into normal release process of the Scala projects I develop;
-- secondly, I want to keep things simple, and I like markdown as an "intermediate" format, for example it's handy to have just markdown documents on github, as it will render them nicely, and then generate from them htmls for a web-site, if needed, using your favourite tool and templates;
-- finally, most of such tools support only one-line comments and ignore block comments, while I want the opposite: write comments as a normal text and have ignored small comments in code;
-- and yes, it's "quick and dirty" — I don't like such things, better to have something simple, but nice.
-
-
 ## The code
 
-This file is the result of running **literator** on it's own source file. The code is pretty straightforward and may be doesn't need much comments, but I use it just as a demonstration and test.
+This file is the result of running Literator on it's own source file. The code is pretty straightforward and may be doesn't need much comments, but I use it just as a demonstration and test.
 
 
 ### Parsers

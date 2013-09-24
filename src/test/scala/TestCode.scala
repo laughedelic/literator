@@ -10,7 +10,7 @@ class SelfDocumentSuite extends FunSuite {
     // assert(results forall (_.successful))
 
     val mainSource = new File("src/main/scala/Literator.scala")
-    val result = Literator.literateFile(mainSource, "./Readme.md")
+    val result = Literator.literateFile(mainSource, "Readme.md")
     assert(result.successful)
   }
 }
