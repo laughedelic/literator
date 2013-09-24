@@ -2,13 +2,13 @@ import sbtrelease._
 
 name := "literator"
 
-description := ""
+description := "A simple tool which converts source code to a markdown document"
 
 homepage := Some(url("https://github.com/laughedelic/literator"))
 
-// organization := "ohnosequences"
+organization := "ohnosequences"
 
-// organizationHomepage := Some(url("http://ohnosequences.com"))
+organizationHomepage := Some(url("http://ohnosequences.com"))
 
 licenses := Seq("AGPLv3" -> url("http://www.gnu.org/licenses/agpl-3.0.txt"))
 
@@ -18,19 +18,16 @@ scalaVersion := "2.10.2"
 
 publishMavenStyle := true
 
-// for publishing you need to set `s3credentials`
-// publishTo <<= (isSnapshot, s3credentials) {
-//                 (snapshot,   credentials) =>
-//   val prefix = if (snapshot) "snapshots" else "releases"
-//   credentials map S3Resolver(
-//       "Era7 "+prefix+" S3 bucket"
-//     , "s3://"+prefix+".era7.com"
-//     , Resolver.mavenStylePatterns
-//     ).toSbtResolver
-// }
+publishTo <<= (isSnapshot, s3credentials) {
+                (snapshot,   credentials) =>
+  val prefix = if (snapshot) "snapshots" else "releases"
+  credentials map S3Resolver(
+      "Era7 "+prefix+" S3 bucket"
+    , "s3://"+prefix+".era7.com"
+    , Resolver.mavenStylePatterns
+    ).toSbtResolver
+}
 
-
-// resolvers ++= Seq ( "Era7 Releases"  at "http://releases.era7.com.s3.amazonaws.com" )
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.0.+" % "test"
 
@@ -45,5 +42,6 @@ scalacOptions ++= Seq(
   )
 
 
-// sbt-release settings
 releaseSettings
+
+com.github.retronym.SbtOneJar.oneJarSettings

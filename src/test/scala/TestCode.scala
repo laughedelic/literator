@@ -1,9 +1,8 @@
-package laughedelic.tools.tests
+package ohnosequences.tools.tests
 
-import laughedelic.tools._
+import ohnosequences.tools._
 import org.scalatest._
 import java.io._
-import scala.io._
 
 class SelfDocumentSuite extends FunSuite {
 
