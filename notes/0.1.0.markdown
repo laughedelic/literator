@@ -1,0 +1,6 @@
+* first release;
+* main features: 
+  + simple parse combinators for scala sources;
+  + block comments indentation managing (with arbitrary margin delimiter);
+  + functions to work with files and directories;
+  + command line interface;
