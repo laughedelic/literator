@@ -1,9 +1,6 @@
 
-
-
-
-#Literator
-
+Literator
+=========
 
 This is a very simple program, which reads a source code file and transforms block comments into normal text and surrounds code with special syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. So the name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not supported by the language.
 
@@ -20,65 +17,82 @@ Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like t
 - finally, most of such tools support only one-line comments and ignore block comments, while I want the opposite: write comments as a normal text and have ignored small comments in code.
 
 
-
-
-
 ## The code
 
-We will use parser combinators from the standard Scala library
+This file is the result of running Literator on it's own source file. The code is pretty straightforward and may be doesn't need much comments, but I use it just as a demonstration and test.
 
+
+### Parsers
+
+We will use parser combinators from the standard Scala library.
 
 
 ```scala
 package laughedelic.tools
 
 import scala.util.parsing.combinator._
-```
 
- This class extends `RegexParsers` and has some parameters, such as language: 
-
-```scala
 case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
-```
 
- By default `RegexParsers` ignore all whitespaces in the input. 
-
-```scala
+  // By default `RegexParsers` ignore ALL whitespaces in the input
   override def skipWhitespace = false
-```
 
- Type aliases for readability. 
-
-```scala
+  // Type aliases for readability
   type Docs = String
   type Code = String
 ```
 
- Here are some useful generic parsers.
- May be there are standard ones like this — I didn't find.
-   
+
+Here are some useful generic parsers.
+May be there are standard ones like this — I didn't find.
+    
 
 ```scala
-  def eol: Parser[String] = "\n"
-  def space: Parser[String] = regex("""[ \t]*""".r)
-  def anythingBut[T](p: => Parser[T]): Parser[String] = guard(not(p)) ~> (".".r | eol)
+  def eol:    Parser[String] = "\n"
+  def spaces: Parser[String] = regex("""\s*""".r)
+  def char:   Parser[String] = regex(".".r) // any symbol except EOL
   def many(p: => Parser[String]): Parser[String] = p.* ^^ (_.mkString)
   def emptyLine: Parser[String] = """^[ \t]*""".r ~> eol
+  def anythingBut[T](p: => Parser[T]): Parser[String] = guard(not(p)) ~> (char | eol)
 ```
 
- Parsing block comments is easy: 
+
+When parsing block comments, we care about identation, so there is a convention:
+- if it's a _one line_ block comment, surrounding spaces are trimmed;
+- if right after the opening comment brace there is a _symbol with a space_,
+  then it's treated as a margin delimiter and the following lines should start
+  from any number of spaces and then this delimiter — when parsed, it will be
+  cutted off;
+- otherwise, nothing special happens, the result will be just everything inside
+  the comment braces.
+
+You can use any symbol for the margin delimeter. Take a look at the 
+`Literator.scala` source file for examples.
+    
 
 ```scala
-  def docs: Parser[Docs] =
-    emptyLine.* ~> space ~>
-    "/*" ~> many(anythingBut("*/")) <~ "*/" <~
-    space <~ emptyLine.* ^^ { _.stripMargin('*') }
+  def docs: Parser[Docs] = {
+    import java.util.regex.Pattern.quote
+
+    // TODO: what if we want to mention comment braces inside of a comment?
+    def innerSymb = anythingBut("*/" | eol) // symbols inside one line of the comment
+
+    spaces ~> "/*" ~> (
+      many(innerSymb) <~ "*/" ^^ { s => (s.trim)+"\n" } // only one line
+    | """\S """.r.? ~                                   // or maybe a margin symbol
+      many(innerSymb | eol) <~ "*/" ^^ {                // and then whatever
+        case Some(m) ~ text => text.replaceAll("""(?m)^\s*"""+quote(m), "")
+        case       _ ~ text => text
+      }
+    )
+  }
 ```
 
- When parsing code we should remember, that it
- can contain a comment-opening sequence inside of a string.
- (Note: only double-quoted strings are handled)
-   
+
+When parsing code blocks we should remember, that it
+can contain a comment-opening brace inside of a string.
+(Note: only double-quoted strings are handled)
+
 
 ```scala
   def code: Parser[Code] =
@@ -89,14 +103,17 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
     }
 ```
 
- A "chunk" of source is a pair of text and following code.
- But the source can start with code, so `source` parsers
- checks if that's the case.
-   
+
+A source is a set of "chunks", which are just pairs of text 
+and following code.
+
+But the source can start just with code, so `source` parser
+checks if that's the case and adds an ampty text if needed.
+    
 
 ```scala
   def chunk: Parser[(Docs, Code)] =
-    docs ~ code ^^ { case p ~ c => (p,c) }
+    docs ~ code ^^ { case d ~ c => (d,c) }
 
   def source: Parser[List[(Docs, Code)]] =
       code.? ~ chunk.* ^^ {
@@ -105,27 +122,19 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
       }
 ```
 
- This function trims the whitespace around code and surrounds
- it with markdown back-ticks syntax
-   
 
-```scala
-  def surroundCode(c: Code): String = {
-    if (c.isEmpty) ""
-    else s"""|```${lang}
-${c}
-```""".stripMargin
-  }
-```
-
- Finally, we transform a list of source _chunks_ into markdown 
+Finally, we transform the list of source _chunks_ into markdown,
+surrounding code blocks with markdown back-ticks syntax.
+    
 
 ```scala
   def markdown: Parser[String] = source ^^ { l =>
-    ("" /: l) { case (acc, (doc, code)) =>
-      acc +
-      (if (doc.isEmpty) "" else "\n\n"+ doc) +
-      (if (code.isEmpty) "" else "\n\n"+ surroundCode(code))
+    def surroundCode(c: Code) =
+      if (c.isEmpty) ""
+      else s"\n\n```${lang}\n${c}\n```\n\n\n"
+
+    ("" /: l) { case (acc, (docs, code)) =>
+      acc + docs + surroundCode(code)
     }
   }
 
@@ -139,11 +148,13 @@ ${c}
 It just takes file name and outputs the result.
 
 
-
 ```scala
 object Main extends App {
+  // TODO: determine language from the file extension
   val lit = LiteratorParsers()
   val text = scala.io.Source.fromFile(args(0)).mkString
   print( lit.parse(lit.markdown, text) )
 }
 ```
+
+
