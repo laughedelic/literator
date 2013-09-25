@@ -114,9 +114,9 @@ One can override these methods, if it's needed for support another language
 Using `escapedCode` parser we can ignore escaped closing 
 comment brace inside of a comment. 
 
-Note: the only limitation is that you cannot use an escaped
+_Note:_ the only limitation is that you cannot use an escaped
  block of code with a closing comment brace inside of a 
- comment with margin.
+ comment _with margin_.
 
 ```scala
   def escapedCodeWith(esc: String) = esc ~> many(anythingBut(esc)) <~ esc ^^ { esc+_+esc }
@@ -136,8 +136,8 @@ Anyway, we need some convention on how to use comments with indentation:
 - otherwise, nothing special happens, the result will be just everything 
   inside the comment braces.
 
-You can use any symbol for the margin delimiter. Take a look at the 
-`Literator.scala` source file for examples.
+You can use almost any symbol as a margin delimiter. Take a look at the 
+[literator sources](src/main/scala/Literator.scala) for examples.
 
 ```scala
   def comment: Parser[Comment] = {
@@ -162,7 +162,8 @@ You can use any symbol for the margin delimiter. Take a look at the
 
 When parsing code blocks we should remember, that it
 can contain a comment-opening brace inside of a string.
-(Note: only double-quoted strings are handled)
+
+_Note:_ only double-quoted strings are handled.
 
 ```scala
   def code: Parser[Code] =
@@ -183,7 +184,7 @@ with markdown backticks syntax.
     _.map{
       case Comment(str) => str
       case Code(str) => if (str.isEmpty) ""
-        else s"\n```${lang}\n${str}\n```\n"
+        else "\n```" + lang + "\n" + str + "\n```\n"
     }.mkString("\n")
   }
 
@@ -233,7 +234,7 @@ This function is a wrapper, convenient for projects. It takes
 the base source directory, destination path, then takes each 
 source file, tries to parse it, writes result to the destination
 and returns the list parsing results.
-Note, that it preserves the structure of the source directory.
+_Note:_ that it preserves the structure of the source directory.
 
 ```scala
   def literateDir(srcBase: File, docsDest: String = ""): List[literator.ParseResult[String]] = {

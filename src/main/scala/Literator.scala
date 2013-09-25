@@ -103,12 +103,12 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
   def commentStart = spaces ~> "/*"
   def commentEnd   = spaces ~> "*/"
 
-  /** Using `escapedCode` parser we can ignore escaped closing 
-    * comment brace inside of a comment. 
-    * 
-    * Note: the only limitation is that you cannot use an escaped
-    *  block of code with a closing comment brace inside of a 
-    *  comment with margin.
+  /*` Using `escapedCode` parser we can ignore escaped closing 
+    ` comment brace inside of a comment. 
+    ` 
+    ` _Note:_ the only limitation is that you cannot use an escaped
+    `  block of code with a closing comment brace inside of a 
+    `  comment _with margin_.
     */
   def escapedCodeWith(esc: String) = esc ~> many(anythingBut(esc)) <~ esc ^^ { esc+_+esc }
   def escapedCode = escapedCodeWith("```") | 
@@ -126,8 +126,8 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
     * - otherwise, nothing special happens, the result will be just everything 
     *   inside the comment braces.
     * 
-    * You can use any symbol for the margin delimiter. Take a look at the 
-    * `Literator.scala` source file for examples.
+    * You can use almost any symbol as a margin delimiter. Take a look at the 
+    * [literator sources](src/main/scala/Literator.scala) for examples.
     */
   def comment: Parser[Comment] = {
     import java.util.regex.Pattern.quote
@@ -150,7 +150,8 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
 
   /*. When parsing code blocks we should remember, that it
     . can contain a comment-opening brace inside of a string.
-    . (Note: only double-quoted strings are handled)
+    . 
+    . _Note:_ only double-quoted strings are handled.
     */
   def code: Parser[Code] =
     many1("\".*/\\*.*\"".r | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
@@ -169,7 +170,7 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
     _.map{
       case Comment(str) => str
       case Code(str) => if (str.isEmpty) ""
-        else s"\n```${lang}\n${str}\n```\n"
+        else "\n```" + lang + "\n" + str + "\n```\n"
     }.mkString("\n")
   }
 
@@ -215,7 +216,7 @@ object Literator {
     ` the base source directory, destination path, then takes each 
     ` source file, tries to parse it, writes result to the destination
     ` and returns the list parsing results.
-    ` Note, that it preserves the structure of the source directory.
+    ` _Note:_ that it preserves the structure of the source directory.
     */
   def literateDir(srcBase: File, docsDest: String = ""): List[literator.ParseResult[String]] = {
     getFileTree(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
