@@ -82,9 +82,11 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
   // By default `RegexParsers` ignore ALL whitespaces in the input
   override def skipWhitespace = false
 
-  // Type aliases for readability
-  type Docs = String
-  type Code = String
+  /* A _chunk_ of code is either a block comment, or code */
+  trait Chunk
+  case class Comment(str: String) extends Chunk
+  case class Code(str: String) extends Chunk
+
 
   /*~ Here are some useful generic parsers.
     ~ May be there are standard ones like this — I didn't find.
@@ -92,84 +94,90 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
   def eol:    Parser[String] = "\n"
   def spaces: Parser[String] = regex("""\s*""".r)
   def char:   Parser[String] = regex(".".r) // any symbol except EOL
-  def many(p: => Parser[String]): Parser[String] = p.* ^^ (_.mkString)
+  def many1(p: => Parser[String]): Parser[String] = p.+ ^^ (_.mkString)
+  def many (p: => Parser[String]): Parser[String] = p.* ^^ (_.mkString)
   def emptyLine: Parser[String] = """^[ \t]*""".r ~> eol
   def anythingBut[T](p: => Parser[T]): Parser[String] = guard(not(p)) ~> (char | eol)
 
-  /** When parsing block comments, we care about indentation, so there is a convention:
+  /* One can override these methods, if it's needed for support another language */
+  def commentStart = spaces ~> "/*"
+  def commentEnd   = spaces ~> "*/"
+
+  /** Using `escapedCode` parser we can ignore escaped closing 
+    * comment brace inside of a comment. 
+    * 
+    * Note: the only limitation is that you cannot use an escaped
+    *  block of code with a closing comment brace inside of a 
+    *  comment with margin.
+    */
+  def escapedCodeWith(esc: String) = esc ~> many(anythingBut(esc)) <~ esc ^^ { esc+_+esc }
+  def escapedCode = escapedCodeWith("```") | 
+                    escapedCodeWith("`")
+
+  /** When parsing block comments, we care about indentation and this is the 
+    * only complex part of this code.
+    * 
+    * Anyway, we need some convention on how to use comments with indentation:
     * - if it's a _one line_ block comment, surrounding spaces are trimmed;
     * - if right after the opening comment brace there is a _symbol with a space_,
-    *   then it's treated as a margin delimiter and the following lines should start
-    *   from any number of spaces and then this delimiter — when parsed, it will be
-    *   cutted off;
-    * - otherwise, nothing special happens, the result will be just everything inside
-    *   the comment braces.
+    *   then it's treated as a margin delimiter and the following lines should
+    *   start from any number of spaces and this delimiter — when parsed, it will
+    *   be cutted off;
+    * - otherwise, nothing special happens, the result will be just everything 
+    *   inside the comment braces.
     * 
     * You can use any symbol for the margin delimiter. Take a look at the 
     * `Literator.scala` source file for examples.
     */
-  def docs: Parser[Docs] = {
+  def comment: Parser[Comment] = {
     import java.util.regex.Pattern.quote
 
-    // TODO: what if we want to mention comment braces inside of a comment?
-    def innerSymb = anythingBut("*/" | eol) // symbols inside one line of the comment
+    def delim = regex("""\S """.r) // delimiter convention: any char + space
+    def margin(delim: String) = spaces ~> quote(delim).r
+    def inner = escapedCode | anythingBut(commentEnd | eol)
 
-    spaces ~> "/*" ~> (
-      many(innerSymb) <~ "*/" ^^ { s => (s.trim)+"\n" } // only one line
-    | """\S """.r.? ~                                   // or maybe a margin symbol
-      many(innerSymb | eol) <~ "*/" ^^ {                // and then whatever
-        case Some(m) ~ text => text.replaceAll("""(?m)^\s*"""+quote(m), "")
-        case       _ ~ text => text
-      }
-    )
+    commentStart ~> (
+      spaces ~> many(inner) <~ commentEnd           // there is only one line
+    | delim.? >> {
+        case None => eol.? ~>                       // if it starts from a newline, skip it
+                         many(inner | eol)          // then just read everything
+        case Some(d) => (many(inner) <~ eol) ~      // rest of the line after delimiter
+           (margin(d) ~> many(inner) <~ eol.?).* ^^ // other lines with the margin
+            { mkList(_).mkString("\n") }
+      } <~ commentEnd 
+    ) ^^ Comment
   }
 
   /*. When parsing code blocks we should remember, that it
     . can contain a comment-opening brace inside of a string.
     . (Note: only double-quoted strings are handled)
-    . */
+    */
   def code: Parser[Code] =
-    emptyLine.* ~>
-    (many( "\".*/\\*.*\"".r | anythingBut("/*" | eol) ) <~ eol).* ^^ {
-      _.reverse.dropWhile(_.trim.isEmpty).reverse.
-        mkString("\n")
-    }
+    many1("\".*/\\*.*\"".r | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
 
 
-  /*| A source is a set of "chunks", which are just pairs of text 
-    | and following code.
-    | 
-    | But the source can start just with code, so `source` parser
-    | checks if that's the case and adds an empty text if needed.
+  /*- Finally, we parse source as a list of chunks and
+    - transform it to markdown, surrounding code blocks 
+    - with markdown backticks syntax.
     */
-  def chunk: Parser[(Docs, Code)] =
-    docs ~ code ^^ { case d ~ c => (d,c) }
+  def chunk: Parser[Chunk] = code | comment
 
-  def source: Parser[List[(Docs, Code)]] =
-      code.? ~ chunk.* ^^ {
-        case Some(c) ~ rest => ("", c) :: rest
-        case      _  ~ rest => rest
-      }
+  def source: Parser[List[Chunk]] =
+    (emptyLine.* ~> chunk).* <~ emptyLine.*
 
-
-  /*- Finally, we transform the list of source _chunks_ into markdown,
-    - surrounding code blocks with markdown back-ticks syntax.
-    */
-  def markdown: Parser[String] = source ^^ { l =>
-    def surroundCode(c: Code) =
-      if (c.isEmpty) ""
-      else s"\n\n```${lang}\n${c}\n```\n\n\n"
-
-    ("" /: l) { case (acc, (docs, code)) =>
-      acc + docs + surroundCode(code)
-    }
+  def markdown: Parser[String] = source ^^ {
+    _.map{
+      case Comment(str) => str
+      case Code(str) => if (str.isEmpty) ""
+        else s"\n```${lang}\n${str}\n```\n"
+    }.mkString("\n")
   }
 
 }
 
 
-/** ### Working with files
-  */
+/* ### Working with files */
+
 object Literator {
 
   // TODO: determine language from the file extension
@@ -184,8 +192,8 @@ object Literator {
     Some(new PrintWriter(file)).foreach{p => p.write(text); p.close}
   }
 
-  /*` This is the key function. It takes a source file, tries to parse it
-    ` and either outputs the result, or writes it to the specified destination. 
+  /*- This is the key function. It takes a source file, tries to parse it
+    - and either outputs the result, or writes it to the specified destination. 
     */
   def literateFile(f: File, destName: String = ""): literator.ParseResult[String] = {
     val src = scala.io.Source.fromFile(f).mkString

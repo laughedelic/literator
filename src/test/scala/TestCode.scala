@@ -11,6 +11,7 @@ class SelfDocumentSuite extends FunSuite {
 
     val mainSource = new File("src/main/scala/Literator.scala")
     val result = Literator.literateFile(mainSource, "Readme.md")
+    // println(result)
     assert(result.successful)
   }
 }
