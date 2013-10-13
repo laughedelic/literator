@@ -1,0 +1,7 @@
+* added types for Comments and Code;
+* simplified general parsers;
+* completely rewrote comments parser with better margin handling;
+* improved handling of empty lines; allowed them in comments with margin;
+* allowed space as a margin delimiter: 
+  no need to use any special symbols, just make the correct indentation!
+* allowed to use escaped code in comments (even with `*/`);

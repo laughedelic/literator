@@ -27,7 +27,7 @@ To use it in Scala project add this dependency to your `build.sbt`:
 ```scala
 resolvers += "Era7 releases" at "http://releases.era7.com.s3.amazonaws.com"
 
-libraryDependencies += "ohnosequences" %% "literator" % "0.1.0"
+libraryDependencies += "ohnosequences" %% "literator" % "0.2.0"
 ```
 
 Then you can use `literateFile` or `literateDir` functions to generate docs for your sources. For example:
@@ -48,13 +48,13 @@ See ["Working with files"](#working-with-files) section for more details.
 To use this tool from command line, download the jar from [releases](https://github.com/laughedelic/literator/releases) and run it like
 
 ```bash
-java -jar literator-0.1.0.jar  src/main/scala/  docs/code/
+java -jar literator-0.2.0.jar  src/main/scala/  docs/code/
 ```
 
 or create a wrapper:
 ```bash
 #!/bin/sh
-java -jar literator-0.1.0.jar "$@"
+java -jar literator-0.2.0.jar "$@"
 ```
 then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs/code/`.
 
@@ -83,7 +83,7 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
   override def skipWhitespace = false
 ```
 
-A _chunk_ of code is either a block comment, or code
+A _chunk_ of source is either a block comment, or code
 
 ```scala
   trait Chunk
@@ -104,11 +104,13 @@ May be there are standard ones like this — I didn't find.
   def anythingBut[T](p: => Parser[T]): Parser[String] = guard(not(p)) ~> (char | eol)
 ```
 
-One can override these methods, if it's needed for support another language
+Here are the parsers for the comment opening and closing braces.
+One can override them, if it's needed for support of another language. 
+They return the offset of the braces, which will be useful later.
 
 ```scala
-  def commentStart = spaces ~> "/*"
-  def commentEnd   = spaces ~> "*/"
+  def commentStart = spaces <~ "/*" ^^ { _ + "  "}
+  def commentEnd   = spaces <~ "*/"
 ```
 
 Using `escapedCode` parser we can ignore escaped closing 
@@ -124,7 +126,7 @@ _Note:_ the only limitation is that you cannot use an escaped
                     escapedCodeWith("`")
 ```
 
-When parsing block comments, we care about indentation and this is the 
+When parsing block comments, we care about indentation and this is the
 only complex part of this code.
 
 Anyway, we need some convention on how to use comments with indentation:
@@ -139,31 +141,37 @@ Anyway, we need some convention on how to use comments with indentation:
 You can use almost any symbol as a margin delimiter. Take a look at the 
 [literator sources](src/main/scala/Literator.scala) for examples.
 
+_Note:_ you can use space as a delimiter, just put _two_ spaces after the
+opening comment brace and remember to indent the following lines to the 
+same level. See this comment in the source for example.
+
 ```scala
   def comment: Parser[Comment] = {
     import java.util.regex.Pattern.quote
 
-    def delim = regex("""\S """.r) // delimiter convention: any char + space
-    def margin(delim: String) = spaces ~> quote(delim).r
     def inner = escapedCode | anythingBut(commentEnd | eol)
 
-    commentStart ~> (
-      spaces ~> many(inner) <~ commentEnd           // there is only one line
-    | delim.? >> {
-        case None => eol.? ~>                       // if it starts from a newline, skip it
-                         many(inner | eol)          // then just read everything
-        case Some(d) => (many(inner) <~ eol) ~      // rest of the line after delimiter
-           (margin(d) ~> many(inner) <~ eol.?).* ^^ // other lines with the margin
+    commentStart >> { offset => (
+      spaces ~> many(inner) <~ commentEnd        // there is only one line
+    | ". ".r.? >> {                              // delimiter convention: any char + space
+        case None => eol.? ~>                    // if it starts from a newline, skip it
+                              many(inner | eol)  // and just read everything
+        case Some(delim) => {
+          def margin = quote(offset + delim).r
+                    (many(inner) <~ eol) ~       // rest of the line after delimiter
+          (margin ~> many(inner) <~ eol.?        // other lines with the margin
+                     | (emptyLine ^^^ "")).* ^^  // which can be empty
             { mkList(_).mkString("\n") }
+        }
       } <~ commentEnd 
-    ) ^^ Comment
+    )} ^^ Comment
   }
 ```
 
 When parsing code blocks we should remember, that it
 can contain a comment-opening brace inside of a string.
 
-_Note:_ only double-quoted strings are handled.
+_Note:_ only double-quoted one-line strings are handled.
 
 ```scala
   def code: Parser[Code] =
@@ -184,7 +192,11 @@ with markdown backticks syntax.
     _.map{
       case Comment(str) => str
       case Code(str) => if (str.isEmpty) ""
-        else "\n```" + lang + "\n" + str + "\n```\n"
+        else Seq( ""
+                , "```"+lang
+                , str
+                , "```"
+                , "").mkString("\n")
     }.mkString("\n")
   }
 
@@ -211,6 +223,7 @@ object Literator {
 
 This is the key function. It takes a source file, tries to parse it
 and either outputs the result, or writes it to the specified destination.
+
 
 ```scala
   def literateFile(f: File, destName: String = ""): literator.ParseResult[String] = {
