@@ -1,4 +1,6 @@
-import sbtrelease._
+import ohnosequences.sbt._
+
+Era7.allSettings
 
 name := "literator"
 
@@ -13,24 +15,12 @@ organizationHomepage := Some(url("http://ohnosequences.com"))
 licenses := Seq("AGPLv3" -> url("http://www.gnu.org/licenses/agpl-3.0.txt"))
 
 
-scalaVersion := "2.10.2"
-
-
-publishMavenStyle := true
-
-publishTo <<= (isSnapshot, s3credentials) {
-                (snapshot,   credentials) =>
-  val prefix = if (snapshot) "snapshots" else "releases"
-  credentials map S3Resolver(
-      "Era7 "+prefix+" S3 bucket"
-    , "s3://"+prefix+".era7.com"
-    , Resolver.mavenStylePatterns
-    ).toSbtResolver
-}
-
+bucketSuffix := "era7.com"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.0.+" % "test"
 
+
+scalaVersion := "2.10.3"
 
 scalacOptions ++= Seq(
     "-feature"
@@ -40,8 +30,5 @@ scalacOptions ++= Seq(
   , "-deprecation"
   , "-unchecked"
   )
-
-
-releaseSettings
 
 com.github.retronym.SbtOneJar.oneJarSettings
