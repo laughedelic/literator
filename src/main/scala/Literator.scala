@@ -28,7 +28,7 @@ To use it in Scala project add this dependency to your `build.sbt`:
 ```scala
 resolvers += "Era7 releases" at "http://releases.era7.com.s3.amazonaws.com"
 
-libraryDependencies += "ohnosequences" %% "literator" % "0.2.0"
+libraryDependencies += "ohnosequences" %% "literator" % "0.3.0"
 ```
 
 Then you can use `literateFile` or `literateDir` functions to generate docs for your sources. For example:
@@ -49,13 +49,13 @@ See ["Working with files"](#working-with-files) section for more details.
 To use this tool from command line, download the jar from [releases](https://github.com/laughedelic/literator/releases) and run it like
 
 ```bash
-java -jar literator-0.2.0.jar  src/main/scala/  docs/code/
+java -jar literator-0.3.0.jar  src/main/scala/  docs/code/
 ```
 
 or create a wrapper:
 ```bash
 #!/bin/sh
-java -jar literator-0.2.0.jar "$@"
+java -jar literator-0.3.0.jar "$@"
 ```
 then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs/code/`.
 
