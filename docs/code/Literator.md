@@ -1,5 +1,6 @@
-/* ### Working with files */
+### Working with files
 
+```scala
 package ohnosequences.tools
 
 import java.io._
@@ -27,15 +28,16 @@ object Literator {
              else List()
             )
 
-  def buildIndex(f: File, ):
-
   def writeFile(file: String, text: String) = {
     Some(new PrintWriter(file)).foreach{p => p.write(text); p.close}
   }
+```
 
-  /*- This is the key function. It takes a source file, tries to parse it
-    - and either outputs the result, or writes it to the specified destination. 
-    */
+This is the key function. It takes a source file, tries to parse it
+and either outputs the result, or writes it to the specified destination.
+
+
+```scala
   def literateFile(f: File, destName: String = ""): literator.ParseResult[String] = {
     val src = scala.io.Source.fromFile(f).mkString
 
@@ -51,13 +53,15 @@ object Literator {
     }
     return result
   }
+```
 
-  /*` This function is a wrapper, convenient for projects. It takes 
-    ` the base source directory, destination path, then takes each 
-    ` source file, tries to parse it, writes result to the destination
-    ` and returns the list parsing results.
-    ` _Note:_ it preserves the structure of the source directory.
-    */
+This function is a wrapper, convenient for projects. It takes 
+the base source directory, destination path, then takes each 
+source file, tries to parse it, writes result to the destination
+and returns the list parsing results.
+_Note:_ it preserves the structure of the source directory.
+
+```scala
   def literateDir(srcBase: File, docsDest: String = ""): List[literator.ParseResult[String]] = {
     val tree = getFileTree(srcBase)
     getFileList(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
@@ -74,3 +78,5 @@ object Literator {
 
 }
 
+
+```
