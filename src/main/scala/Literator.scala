@@ -171,8 +171,9 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
     */
   def chunk: Parser[Chunk] = code | comment
 
-  def source: Parser[List[Chunk]] =
+  def source: Parser[List[Chunk]] = phrase(
     (emptyLine.* ~> chunk).* <~ emptyLine.*
+  )
 
   def markdown: Parser[String] = source ^^ {
     _.map{
@@ -223,7 +224,7 @@ object Literator {
       }
     }
     result match {
-      case literator.NoSuccess(msg, _) => Some(msg)
+      case literator.NoSuccess(msg, _) => Some(f + " " + result.toString)
       case _ => None
     }
   }
@@ -231,7 +232,7 @@ object Literator {
   /*` This function is a wrapper, convenient for projects. It takes 
     ` the base source directory, destination path, then takes each 
     ` source file, tries to parse it, writes result to the destination
-    ` and returns the list parsing results.
+    ` and returns the list parsing errors.
     ` _Note:_ that it preserves the structure of the source directory.
     */
   def literateDir(srcBase: File, docsDest: String = ""): List[String] = {

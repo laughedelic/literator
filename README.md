@@ -185,8 +185,9 @@ with markdown backticks syntax.
 ```scala
   def chunk: Parser[Chunk] = code | comment
 
-  def source: Parser[List[Chunk]] =
+  def source: Parser[List[Chunk]] = phrase(
     (emptyLine.* ~> chunk).* <~ emptyLine.*
+  )
 
   def markdown: Parser[String] = source ^^ {
     _.map{
@@ -240,7 +241,7 @@ It returns parsing failure message or `None` if everthing went well.
       }
     }
     result match {
-      case literator.NoSuccess(msg, _) => Some(msg)
+      case literator.NoSuccess(msg, _) => Some(f + " " + result.toString)
       case _ => None
     }
   }
@@ -249,7 +250,7 @@ It returns parsing failure message or `None` if everthing went well.
 This function is a wrapper, convenient for projects. It takes 
 the base source directory, destination path, then takes each 
 source file, tries to parse it, writes result to the destination
-and returns the list parsing results.
+and returns the list parsing errors.
 _Note:_ that it preserves the structure of the source directory.
 
 ```scala
