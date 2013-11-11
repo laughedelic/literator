@@ -222,11 +222,11 @@ object Literator {
 ```
 
 This is the key function. It takes a source file, tries to parse it
-and either outputs the result, or writes it to the specified destination.
-
+and either outputs the result, or writes it to the specified destination. 
+It returns parsing failure message or `None` if everthing went well.
 
 ```scala
-  def literateFile(f: File, destName: String = ""): literator.ParseResult[String] = {
+  def literateFile(f: File, destName: String = ""): Option[String] = {
     val src = scala.io.Source.fromFile(f).mkString
 
     val result = literator.parseAll(literator.markdown, src)
@@ -239,7 +239,10 @@ and either outputs the result, or writes it to the specified destination.
         writeFile(destName, text) 
       }
     }
-    return result
+    result match {
+      case literator.NoSuccess(msg, _) => Some(msg)
+      case _ => None
+    }
   }
 ```
 
@@ -250,7 +253,7 @@ and returns the list parsing results.
 _Note:_ that it preserves the structure of the source directory.
 
 ```scala
-  def literateDir(srcBase: File, docsDest: String = ""): List[literator.ParseResult[String]] = {
+  def literateDir(srcBase: File, docsDest: String = ""): List[String] = {
     getFileTree(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
 
       // constructing name for the output file, creating directories, etc.
@@ -260,7 +263,7 @@ _Note:_ that it preserves the structure of the source directory.
       val destName = dest.stripSuffix(".scala")+".md"
       literateFile(f, destName)
 
-    }
+    } flatten
   }
 
 }
