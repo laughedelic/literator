@@ -1,5 +1,20 @@
-/* ### Working with files */
+### Index
 
++ src
+  + main
+    + scala
+      + [Literator.scala](Literator.md)
+      + [LiteratorCLI.scala](LiteratorCLI.md)
+      + [LiteratorParsers.scala](LiteratorParsers.md)
+  + test
+    + scala
+      + [TestCode.scala](../../test/scala/TestCode.md)
+
+------
+
+### Working with files
+
+```scala
 package ohnosequences.tools
 
 import java.io._
@@ -49,11 +64,13 @@ object Literator {
     import sys.process._
     Seq("echo", text) #> file !
   }
+```
 
-  /*- This is the key function. It takes a source file, tries to parse it
-    - and either outputs the result, or writes it to the specified destination. 
-    - It returns parsing failure message or `None` if everthing went well.
-    */
+This is the key function. It takes a source file, tries to parse it
+and either outputs the result, or writes it to the specified destination. 
+It returns parsing failure message or `None` if everthing went well.
+
+```scala
   def literateFile(
         file: File
       , destDir: Option[File] = None
@@ -85,13 +102,15 @@ object Literator {
       }
     }
   }
+```
 
-  /*` This function is a wrapper, convenient for projects. It takes 
-    ` the base source directory, destination path, then takes each 
-    ` source file, tries to parse it, writes result to the destination
-    ` and returns the list parsing errors.
-    ` _Note:_ that it preserves the structure of the source directory.
-    */
+This function is a wrapper, convenient for projects. It takes 
+the base source directory, destination path, then takes each 
+source file, tries to parse it, writes result to the destination
+and returns the list parsing errors.
+_Note:_ that it preserves the structure of the source directory.
+
+```scala
   def literateDir(
         srcBase: File
       , destBase: Option[File] = None
@@ -108,4 +127,7 @@ object Literator {
   }
 
 }
+
+
+```
 

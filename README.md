@@ -25,7 +25,7 @@ Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like t
 To use it in Scala project add this dependency to your `build.sbt`:
 
 ```scala
-resolvers += "Era7 releases" at "http://releases.era7.com.s3.amazonaws.com"
+resolvers += "Era7 maven releases" at "http://releases.era7.com.s3.amazonaws.com"
 
 libraryDependencies += "ohnosequences" %% "literator" % "0.3.0"
 ```
@@ -33,14 +33,15 @@ libraryDependencies += "ohnosequences" %% "literator" % "0.3.0"
 Then you can use `literateFile` or `literateDir` functions to generate docs for your sources. For example:
 
 ```scala
+import java.io._
 import ohnosequences.tools.Literator._
 
-literateDir(new File("src/main/scala/"), "docs/code/")
+literateDir(new File("src/main/scala/"), new File("docs/code/"))
 
-literateFile(new File("src/main/scala/Literator.scala"), "Readme.md")
+literateFile(new File("src/main/scala/MainSource.scala"), "Readme.md")
 ```
 
-See ["Working with files"](#working-with-files) section for more details.
+See ["Working with files"](docs/src/main/scala/Literator.md) section for more details.
 
 
 ### Command line
@@ -58,237 +59,9 @@ java -jar literator-0.3.0.jar "$@"
 ```
 then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs/code/`.
 
-See ["Command line interface"](#command-line-interface) section for a bit more information.
+See ["Command line interface"](docs/src/main/scala/LiteratorCLI.md) section for a bit more information.
 
 
-## The code
+## Demo/Documentation
 
-This file is the result of running Literator on it's own source file. The code is pretty straightforward and may be doesn't need much comments, but I use it just as a demonstration and test.
-
-
-### Parsers
-
-We will use parser combinators from the standard Scala library.
-
-
-```scala
-package ohnosequences.tools
-
-import scala.util.parsing.combinator._
-import java.io._
-
-case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
-
-  // By default `RegexParsers` ignore ALL whitespaces in the input
-  override def skipWhitespace = false
-```
-
-A _chunk_ of source is either a block comment, or code
-
-```scala
-  trait Chunk
-  case class Comment(str: String) extends Chunk
-  case class Code(str: String) extends Chunk
-```
-
-Here are some useful generic parsers.
-May be there are standard ones like this — I didn't find.
-
-```scala
-  def eol:    Parser[String] = "\n"
-  def spaces: Parser[String] = regex("""\s*""".r)
-  def char:   Parser[String] = regex(".".r) // any symbol except EOL
-  def many1(p: => Parser[String]): Parser[String] = p.+ ^^ (_.mkString)
-  def many (p: => Parser[String]): Parser[String] = p.* ^^ (_.mkString)
-  def emptyLine: Parser[String] = """^[ \t]*""".r ~> eol
-  def anythingBut[T](p: => Parser[T]): Parser[String] = guard(not(p)) ~> (char | eol)
-```
-
-Here are the parsers for the comment opening and closing braces.
-One can override them, if it's needed for support of another language. 
-They return the offset of the braces, which will be useful later.
-
-```scala
-  def commentStart = spaces <~ "/*" ^^ { _ + "  "}
-  def commentEnd   = spaces <~ "*/"
-```
-
-Using `escapedCode` parser we can ignore escaped closing 
-comment brace inside of a comment. 
-
-_Note:_ the only limitation is that you cannot use an escaped
- block of code with a closing comment brace inside of a 
- comment _with margin_.
-
-```scala
-  def escapedCodeWith(esc: String) = esc ~> many(anythingBut(esc)) <~ esc ^^ { esc+_+esc }
-  def escapedCode = escapedCodeWith("```") | 
-                    escapedCodeWith("`")
-```
-
-When parsing block comments, we care about indentation and this is the
-only complex part of this code.
-
-Anyway, we need some convention on how to use comments with indentation:
-- if it's a _one line_ block comment, surrounding spaces are trimmed;
-- if right after the opening comment brace there is a _symbol with a space_,
-  then it's treated as a margin delimiter and the following lines should
-  start from any number of spaces and this delimiter — when parsed, it will
-  be cutted off;
-- otherwise, nothing special happens, the result will be just everything 
-  inside the comment braces.
-
-You can use almost any symbol as a margin delimiter. Take a look at the 
-[literator sources](src/main/scala/Literator.scala) for examples.
-
-_Note:_ you can use space as a delimiter, just put _two_ spaces after the
-opening comment brace and remember to indent the following lines to the 
-same level. See this comment in the source for example.
-
-```scala
-  def comment: Parser[Comment] = {
-    import java.util.regex.Pattern.quote
-
-    def inner = escapedCode | anythingBut(commentEnd | eol)
-
-    commentStart >> { offset => (
-      spaces ~> many(inner) <~ commentEnd        // there is only one line
-    | ". ".r.? >> {                              // delimiter convention: any char + space
-        case None => eol.? ~>                    // if it starts from a newline, skip it
-                              many(inner | eol)  // and just read everything
-        case Some(delim) => {
-          def margin = quote(offset + delim).r
-                    (many(inner) <~ eol) ~       // rest of the line after delimiter
-          (margin ~> many(inner) <~ eol.?        // other lines with the margin
-                     | (emptyLine ^^^ "")).* ^^  // which can be empty
-            { mkList(_).mkString("\n") }
-        }
-      } <~ commentEnd 
-    )} ^^ Comment
-  }
-```
-
-When parsing code blocks we should remember, that it
-can contain a comment-opening brace inside of a string.
-
-_Note:_ only double-quoted one-line strings are handled.
-
-```scala
-  def code: Parser[Code] =
-    many1("\".*/\\*.*\"".r | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
-```
-
-Finally, we parse source as a list of chunks and
-transform it to markdown, surrounding code blocks 
-with markdown backticks syntax.
-
-```scala
-  def chunk: Parser[Chunk] = code | comment
-
-  def source: Parser[List[Chunk]] = phrase(
-    (emptyLine.* ~> chunk).* <~ emptyLine.*
-  )
-
-  def markdown: Parser[String] = source ^^ {
-    _.map{
-      case Comment(str) => str
-      case Code(str) => if (str.isEmpty) ""
-        else Seq( ""
-                , "```"+lang
-                , str
-                , "```"
-                , "").mkString("\n")
-    }.mkString("\n")
-  }
-
-}
-```
-
-### Working with files
-
-```scala
-object Literator {
-
-  // TODO: determine language from the file extension
-  val literator = LiteratorParsers("scala")
-
-  // traverses recursively given directory and lists all files
-  def getFileTree(f: File): List[File] =
-    f :: (if (f.isDirectory) f.listFiles.toList.flatMap(getFileTree) 
-          else List())
-
-  def writeFile(file: String, text: String) = {
-    Some(new PrintWriter(file)).foreach{p => p.write(text); p.close}
-  }
-```
-
-This is the key function. It takes a source file, tries to parse it
-and either outputs the result, or writes it to the specified destination. 
-It returns parsing failure message or `None` if everthing went well.
-
-```scala
-  def literateFile(f: File, destName: String = ""): Option[String] = {
-    val src = scala.io.Source.fromFile(f).mkString
-
-    val result = literator.parseAll(literator.markdown, src)
-    result map {
-      if (destName.isEmpty) print 
-      else { text =>
-        val destDir = new File(destName).getParentFile
-        // `.getParentFile` may return null if you give it just a file name
-        if (destDir != null && !destDir.exists) destDir.mkdirs
-        writeFile(destName, text) 
-      }
-    }
-    result match {
-      case literator.NoSuccess(msg, _) => Some(f + " " + result.toString)
-      case _ => None
-    }
-  }
-```
-
-This function is a wrapper, convenient for projects. It takes 
-the base source directory, destination path, then takes each 
-source file, tries to parse it, writes result to the destination
-and returns the list parsing errors.
-_Note:_ that it preserves the structure of the source directory.
-
-```scala
-  def literateDir(srcBase: File, docsDest: String = ""): List[String] = {
-    getFileTree(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
-
-      // constructing name for the output file, creating directories, etc.
-      val relative = srcBase.toURI.relativize(f.toURI).getPath.toString
-      val destDir = if (docsDest.isEmpty) "docs" else docsDest
-      val dest = destDir.stripSuffix("/") +"/"+ relative
-      val destName = dest.stripSuffix(".scala")+".md"
-      literateFile(f, destName)
-
-    } flatten
-  }
-
-}
-```
-
-### Command line interface
-
-* Input: 
-  + a directory with sources or a single file
-  + (optional) destination: path prefix or a file name respectively
-* Output:
-  + if second argument is given, file(s) with documentation
-  + if not, it's set to `docs/` or `stdout` respectively
-
-
-```scala
-object LiteratorCLI extends App {
-  if (args.length < 1) sys.error("Need at least one argument")
-  else {
-    val inp = new File(args(0))
-    val dest = if (args.length > 1) args(1) else ""
-    if (inp.isDirectory) Literator.literateDir(inp, dest)
-    else Literator.literateFile(inp, dest)
-  }
-}
-
-```
+You can see the result of running Literator on it's own sources in the [docs](docs) directory. The most interesting part (in terms of content and formatting) is [LiteratorParsers.scala](docs/src/main/scala/LiteratorParsers.md).
