@@ -25,7 +25,7 @@ Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like t
 To use it in Scala project add this dependency to your `build.sbt`:
 
 ```scala
-resolvers += "Era7 releases" at "http://releases.era7.com.s3.amazonaws.com"
+resolvers += "Era7 maven releases" at "http://releases.era7.com.s3.amazonaws.com"
 
 libraryDependencies += "ohnosequences" %% "literator" % "0.3.0"
 ```
@@ -33,14 +33,15 @@ libraryDependencies += "ohnosequences" %% "literator" % "0.3.0"
 Then you can use `literateFile` or `literateDir` functions to generate docs for your sources. For example:
 
 ```scala
+import java.io._
 import ohnosequences.tools.Literator._
 
-literateDir(new File("src/main/scala/"), "docs/code/")
+literateDir(new File("src/main/scala/"), new File("docs/code/"))
 
-literateFile(new File("src/main/scala/Literator.scala"), "Readme.md")
+literateFile(new File("src/main/scala/MainSource.scala"), "Readme.md")
 ```
 
-See ["Working with files"](#working-with-files) section for more details.
+See ["Working with files"](docs/src/main/scala/Literator.md) section for more details.
 
 
 ### Command line
@@ -58,9 +59,9 @@ java -jar literator-0.3.0.jar "$@"
 ```
 then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs/code/`.
 
-See ["Command line interface"](#command-line-interface) section for a bit more information.
+See ["Command line interface"](docs/src/main/scala/LiteratorCLI.md) section for a bit more information.
 
 
-## The code
+## Demo/Documentation
 
-This file is the result of running Literator on it's own source file. The code is pretty straightforward and may be doesn't need much comments, but I use it just as a demonstration and test.
+You can see the result of running Literator on it's own sources in the [docs](docs) directory. The most interesting part (in terms of content and formatting) is [LiteratorParsers.scala](docs/src/main/scala/LiteratorParsers.md).
