@@ -27,7 +27,7 @@ object Literator {
              else List()
             )
 
-  def buildIndex(f: File, ):
+  // def buildIndex(f: File, ):
 
   def writeFile(file: String, text: String) = {
     Some(new PrintWriter(file)).foreach{p => p.write(text); p.close}
@@ -35,8 +35,9 @@ object Literator {
 
   /*- This is the key function. It takes a source file, tries to parse it
     - and either outputs the result, or writes it to the specified destination. 
+    - It returns parsing failure message or `None` if everthing went well.
     */
-  def literateFile(f: File, destName: String = ""): literator.ParseResult[String] = {
+  def literateFile(f: File, destName: String = ""): Option[String] = {
     val src = scala.io.Source.fromFile(f).mkString
 
     val result = literator.parseAll(literator.markdown, src)
@@ -49,18 +50,20 @@ object Literator {
         writeFile(destName, text) 
       }
     }
-    return result
+    result match {
+      case literator.NoSuccess(msg, _) => Some(f + " " + result.toString)
+      case _ => None
+    }
   }
 
   /*` This function is a wrapper, convenient for projects. It takes 
     ` the base source directory, destination path, then takes each 
     ` source file, tries to parse it, writes result to the destination
-    ` and returns the list parsing results.
-    ` _Note:_ it preserves the structure of the source directory.
+    ` and returns the list parsing errors.
+    ` _Note:_ that it preserves the structure of the source directory.
     */
-  def literateDir(srcBase: File, docsDest: String = ""): List[literator.ParseResult[String]] = {
-    val tree = getFileTree(srcBase)
-    getFileList(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
+  def literateDir(srcBase: File, docsDest: String = ""): List[String] = {
+    getFileTree(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
 
       // constructing name for the output file, creating directories, etc.
       val relative = srcBase.toURI.relativize(f.toURI).getPath.toString
@@ -69,7 +72,7 @@ object Literator {
       val destName = dest.stripSuffix(".scala")+".md"
       literateFile(f, destName)
 
-    }
+    } flatten
   }
 
 }
