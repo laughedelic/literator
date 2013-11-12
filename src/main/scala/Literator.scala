@@ -3,6 +3,9 @@
 package ohnosequences.tools
 
 import java.io._
+// import java.nio.file.File._
+import java.nio.file.Path
+import java.nio.file.Path._
 
 object Literator {
 
@@ -14,20 +17,36 @@ object Literator {
     f :: (if (f.isDirectory) f.listFiles.toList.flatMap(getFileList) 
           else List())
 
-  case class FileNode(f: File, t: List[FileNode]) {
-    override def toString: String = preStr.mkString("\n")
-    def preStr: List[String] =
-      ("+ " + f.getCanonicalFile.getName) :: 
-      t.flatMap{ i: FileNode => i.preStr.map{ s: String => "  " + s } }
+  // returns path of `f` relatively to `base` as a `String`
+  def relativePath(f: File, base: File): String = {
+    val b = if (base.isDirectory) base else base.getParentFile
+    b.toPath.relativize(f.toPath).toString
   }
 
-  def getFileTree(f: File): FileNode =
-    FileNode(f, 
-             if (f.isDirectory) f.listFiles.toList.map(getFileTree) 
+  // changes `.scala` extension to `.md`
+  def mdExtension(name: String): String = {
+    if (name.endsWith(".scala")) name.stripSuffix(".scala")+".md"
+    else name
+  }
+
+  case class FileNode(f: File, t: List[FileNode]) {
+    def mdLink(base: File): String =
+      if (f.isDirectory) f.getCanonicalFile.getName
+      else "["+ f.getCanonicalFile.getName+ "]("+ mdExtension(relativePath(f, base)) +")"
+
+    def tree(base: File): List[String] = {
+      ("+ " + mdLink(base)) :: 
+      t.flatMap{ i: FileNode => i.tree(base).map{ s: String => "  " + s } }
+    }
+
+    override def toString: String = tree(f).mkString("\n")
+  }
+
+  def getFileTree(root: File): FileNode =
+    FileNode(root, 
+             if (root.isDirectory) root.listFiles.toList.map(getFileTree) 
              else List()
             )
-
-  // def buildIndex(f: File, ):
 
   def writeFile(file: String, text: String) = {
     Some(new PrintWriter(file)).foreach{p => p.write(text); p.close}
@@ -63,13 +82,13 @@ object Literator {
     ` _Note:_ that it preserves the structure of the source directory.
     */
   def literateDir(srcBase: File, docsDest: String = ""): List[String] = {
-    getFileTree(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
+    getFileList(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
 
       // constructing name for the output file, creating directories, etc.
-      val relative = srcBase.toURI.relativize(f.toURI).getPath.toString
+      val relative = relativePath(f, srcBase)
       val destDir = if (docsDest.isEmpty) "docs" else docsDest
       val dest = destDir.stripSuffix("/") +"/"+ relative
-      val destName = dest.stripSuffix(".scala")+".md"
+      val destName = mdExtension(dest)
       literateFile(f, destName)
 
     } flatten
