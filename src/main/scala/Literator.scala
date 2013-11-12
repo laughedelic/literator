@@ -99,7 +99,7 @@ object Literator {
       ): List[String] = {
 
     getFileList(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
-      val base: File = destBase.getOrElse(new File("docs/code")).getCanonicalFile
+      val base: File = destBase.getOrElse(new File("docs/src")).getCanonicalFile
       val relative: Path = relativePath(f.getParentFile, srcBase)
       val dest: File = new File(base, relative.toString)
       literateFile(f, Some(dest), if (withIndex) Some(getFileTree(srcBase)) else None)

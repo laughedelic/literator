@@ -36,12 +36,12 @@ Then you can use `literateFile` or `literateDir` functions to generate docs for 
 import java.io._
 import ohnosequences.tools.Literator._
 
-literateDir(new File("src/main/scala/"), new File("docs/code/"))
+literateDir(new File("src/main/scala/"), new File("docs/src/"))
 
 literateFile(new File("src/main/scala/MainSource.scala"), "Readme.md")
 ```
 
-See ["Working with files"](docs/code/main/scala/Literator.md) section for more details.
+See ["Working with files"](docs/src/main/scala/Literator.md) section for more details.
 
 
 ### Command line
@@ -49,7 +49,7 @@ See ["Working with files"](docs/code/main/scala/Literator.md) section for more d
 To use this tool from command line, download the jar from [releases](https://github.com/laughedelic/literator/releases) and run it like
 
 ```bash
-java -jar literator-0.3.0.jar  src/main/scala/  docs/code/
+java -jar literator-0.3.0.jar  src/main/scala/  docs/src/
 ```
 
 or create a wrapper:
@@ -57,11 +57,11 @@ or create a wrapper:
 #!/bin/sh
 java -jar literator-0.3.0.jar "$@"
 ```
-then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs/code/`.
+then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs/src/`.
 
-See ["Command line interface"](docs/code/main/scala/LiteratorCLI.md) section for a bit more information.
+See ["Command line interface"](docs/src/main/scala/LiteratorCLI.md) section for a bit more information.
 
 
 ## Demo/Documentation
 
-You can see the result of running Literator on it's own sources in the [docs](docs) directory. The most interesting part (in terms of content and formatting) is [LiteratorParsers.scala](docs/code/main/scala/LiteratorParsers.md).
+You can see the result of running Literator on it's own sources in the [docs](docs) directory. The most interesting part (in terms of content and formatting) is [LiteratorParsers.scala](docs/src/main/scala/LiteratorParsers.md).
