@@ -111,16 +111,19 @@ and returns the list parsing errors.
 _Note:_ that it preserves the structure of the source directory.
 
 ```scala
-  def literateDir(srcBase: File, destBase: Option[File] = None): List[String] = {
-    getFileList(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
+  def literateDir(
+        srcBase: File
+      , destBase: Option[File] = None
+      , withIndex: Boolean = true
+      ): List[String] = {
 
-      // constructing name for the output file, creating directories, etc.
+    getFileList(srcBase).filter(_.getName.endsWith(".scala")) map { f =>
       val base: File = destBase.getOrElse(new File("docs/code")).getCanonicalFile
       val relative: Path = relativePath(f.getParentFile, srcBase)
       val dest: File = new File(base, relative.toString)
-      literateFile(f, Some(dest), Some(getFileTree(srcBase)))
-
+      literateFile(f, Some(dest), if (withIndex) Some(getFileTree(srcBase)) else None)
     } flatten
+
   }
 
 }
