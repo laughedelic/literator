@@ -4,7 +4,7 @@ Nice.fatArtifactSettings
 
 name := "literator"
 
-description := "A simple tool which converts source code to a markdown document"
+description := "A simple tool which converts Scala sources to markdown"
 
 homepage := Some(url("https://github.com/laughedelic/literator"))
 

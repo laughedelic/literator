@@ -18,7 +18,6 @@
 package ohnosequences.tools
 
 import java.io._
-// import java.nio.file.File._
 import java.nio.file.Path
 import java.nio.file.Path._
 
