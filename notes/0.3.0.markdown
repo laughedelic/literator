@@ -1,0 +1,5 @@
+* Restructured project: separated different components
+* Added (optional) **navigation index** to the generated markdown
+* Changed interface to use File/Path everywhere
+* Changed type of literateFile/Dir: now it returns error messages if there are any
+* Changed default docs destination from docs/code to docs/src
