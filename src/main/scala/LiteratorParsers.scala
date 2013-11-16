@@ -1,10 +1,10 @@
-/* ### Parsers */
+/* ## Parsers */
 
-package ohnosequences.tools
+package ohnosequences.tools.literator
 
 import scala.util.parsing.combinator._
 
-case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
+case class LiteratorParsers(val lang: Language) extends RegexParsers {
 
   // By default `RegexParsers` ignore ALL whitespaces in the input
   override def skipWhitespace = false
@@ -29,8 +29,8 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
   /*  Here are the parsers for the comment opening and closing braces.
       One can override them, if it's needed for support of another language. 
       They return the offset of the braces, which will be useful later. */
-  def commentStart = spaces <~ "/*" ^^ { _ + "  "}
-  def commentEnd   = spaces <~ "*/"
+  def commentStart = spaces <~ lang.opening ^^ { _ + "  "}
+  def commentEnd   = spaces <~ lang.closing
 
   /*` Using `escapedCode` parser we can ignore escaped closing 
     ` comment brace inside of a comment. 
@@ -106,7 +106,7 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
       case Comment(str) => str
       case Code(str) => if (str.isEmpty) ""
         else Seq( ""
-                , "```"+lang
+                , "```"+lang.syntax
                 , str
                 , "```"
                 , "").mkString("\n")

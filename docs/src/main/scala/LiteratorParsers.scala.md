@@ -1,25 +1,11 @@
-### Index
-
-+ src
-  + main
-    + scala
-      + [Literator.scala](Literator.md)
-      + [LiteratorCLI.scala](LiteratorCLI.md)
-      + [LiteratorParsers.scala](LiteratorParsers.md)
-  + test
-    + scala
-      + [TestCode.scala](../../test/scala/TestCode.md)
-
-------
-
-### Parsers
+## Parsers
 
 ```scala
-package ohnosequences.tools
+package ohnosequences.tools.literator
 
 import scala.util.parsing.combinator._
 
-case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
+case class LiteratorParsers(val lang: Language) extends RegexParsers {
 
   // By default `RegexParsers` ignore ALL whitespaces in the input
   override def skipWhitespace = false
@@ -51,8 +37,8 @@ One can override them, if it's needed for support of another language.
 They return the offset of the braces, which will be useful later.
 
 ```scala
-  def commentStart = spaces <~ "/*" ^^ { _ + "  "}
-  def commentEnd   = spaces <~ "*/"
+  def commentStart = spaces <~ lang.opening ^^ { _ + "  "}
+  def commentEnd   = spaces <~ lang.closing
 ```
 
 Using `escapedCode` parser we can ignore escaped closing 
@@ -135,7 +121,7 @@ with markdown backticks syntax.
       case Comment(str) => str
       case Code(str) => if (str.isEmpty) ""
         else Seq( ""
-                , "```"+lang
+                , "```"+lang.syntax
                 , str
                 , "```"
                 , "").mkString("\n")
@@ -146,3 +132,19 @@ with markdown backticks syntax.
 
 ```
 
+
+------
+
+### Index
+
++ src
+  + main
+    + scala
+      + [FileUtils.scala](FileUtils.scala.md)
+      + [LanguageMap.scala](LanguageMap.scala.md)
+      + [LiteratorCLI.scala](LiteratorCLI.scala.md)
+      + [LiteratorParsers.scala](LiteratorParsers.scala.md)
+      + [package.scala](package.scala.md)
+  + test
+    + scala
+      + [TestCode.scala](../../test/scala/TestCode.scala.md)
