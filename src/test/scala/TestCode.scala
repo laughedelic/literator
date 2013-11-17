@@ -1,17 +1,12 @@
-package ohnosequences.tools.tests
+package ohnosequences.tools.literator.tests
 
-import ohnosequences.tools._
+import ohnosequences.tools.literator._
+import ohnosequences.tools.literator.FileUtils._
 import org.scalatest._
-import java.io._
 
 class SelfDocumentSuite extends FunSuite {
   test("Run itself on itself's source") {
-    // val results = Literator.literateDir(new File("src/main/scala/"))
-    // assert(results forall (_.successful))
-
-    val mainSource = new File("src/main/scala/Literator.scala")
-    val result = Literator.literateFile(mainSource, "Readme.md")
-    println(result)
-    assert(result.successful)
+    val errors = file("src").literate()
+    assert(errors.isEmpty, errors mkString "\n")
   }
 }
