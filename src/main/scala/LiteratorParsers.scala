@@ -1,10 +1,10 @@
-/* ### Parsers */
+/* ## Parsers */
 
-package ohnosequences.tools
+package ohnosequences.tools.literator
 
 import scala.util.parsing.combinator._
 
-case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
+case class LiteratorParsers(val lang: Language) extends RegexParsers {
 
   // By default `RegexParsers` ignore ALL whitespaces in the input
   override def skipWhitespace = false
@@ -29,8 +29,8 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
   /*  Here are the parsers for the comment opening and closing braces.
       One can override them, if it's needed for support of another language. 
       They return the offset of the braces, which will be useful later. */
-  def commentStart = spaces <~ "/*" ^^ { _ + "  "}
-  def commentEnd   = spaces <~ "*/"
+  def commentStart = spaces <~ lang.comment.start ^^ { _ + "  "}
+  def commentEnd   = spaces <~ lang.comment.end
 
   /*` Using `escapedCode` parser we can ignore escaped closing 
     ` comment brace inside of a comment. 
@@ -85,11 +85,13 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
 
   /*. When parsing code blocks we should remember, that it
     . can contain a comment-opening brace inside of a string.
-    . 
-    . _Note:_ only double-quoted one-line strings are handled.
+    . So code is just strings or anything but comment.
     */
+  def str: Parser[String] =
+    ("\"\"\"" | "\"") >> { q => many("\\\"" | anythingBut(q)) <~ q ^^ { q+_+q } }
+
   def code: Parser[Code] =
-    many1("\".*/\\*.*\"".r | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
+    many1(str | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
 
 
   /*- Finally, we parse source as a list of chunks and
@@ -106,7 +108,7 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
       case Comment(str) => str
       case Code(str) => if (str.isEmpty) ""
         else Seq( ""
-                , "```"+lang
+                , "```"+lang.syntax
                 , str
                 , "```"
                 , "").mkString("\n")

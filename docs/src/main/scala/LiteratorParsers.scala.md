@@ -1,25 +1,11 @@
-### Index
-
-+ src
-  + main
-    + scala
-      + [Literator.scala](Literator.md)
-      + [LiteratorCLI.scala](LiteratorCLI.md)
-      + [LiteratorParsers.scala](LiteratorParsers.md)
-  + test
-    + scala
-      + [TestCode.scala](../../test/scala/TestCode.md)
-
-------
-
-### Parsers
+## Parsers
 
 ```scala
-package ohnosequences.tools
+package ohnosequences.tools.literator
 
 import scala.util.parsing.combinator._
 
-case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
+case class LiteratorParsers(val lang: Language) extends RegexParsers {
 
   // By default `RegexParsers` ignore ALL whitespaces in the input
   override def skipWhitespace = false
@@ -51,8 +37,8 @@ One can override them, if it's needed for support of another language.
 They return the offset of the braces, which will be useful later.
 
 ```scala
-  def commentStart = spaces <~ "/*" ^^ { _ + "  "}
-  def commentEnd   = spaces <~ "*/"
+  def commentStart = spaces <~ lang.comment.start ^^ { _ + "  "}
+  def commentEnd   = spaces <~ lang.comment.end
 ```
 
 Using `escapedCode` parser we can ignore escaped closing 
@@ -112,12 +98,14 @@ same level. See this comment in the source for example.
 
 When parsing code blocks we should remember, that it
 can contain a comment-opening brace inside of a string.
-
-_Note:_ only double-quoted one-line strings are handled.
+So code is just strings or anything but comment.
 
 ```scala
+  def str: Parser[String] =
+    ("\"\"\"" | "\"") >> { q => many("\\\"" | anythingBut(q)) <~ q ^^ { q+_+q } }
+
   def code: Parser[Code] =
-    many1("\".*/\\*.*\"".r | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
+    many1(str | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
 ```
 
 Finally, we parse source as a list of chunks and
@@ -135,7 +123,7 @@ with markdown backticks syntax.
       case Comment(str) => str
       case Code(str) => if (str.isEmpty) ""
         else Seq( ""
-                , "```"+lang
+                , "```"+lang.syntax
                 , str
                 , "```"
                 , "").mkString("\n")
@@ -146,3 +134,19 @@ with markdown backticks syntax.
 
 ```
 
+
+------
+
+### Index
+
++ src
+  + main
+    + scala
+      + [FileUtils.scala](FileUtils.scala.md)
+      + [LanguageMap.scala](LanguageMap.scala.md)
+      + [LiteratorCLI.scala](LiteratorCLI.scala.md)
+      + [LiteratorParsers.scala](LiteratorParsers.scala.md)
+      + [package.scala](package.scala.md)
+  + test
+    + scala
+      + [TestCode.scala](../../test/scala/TestCode.scala.md)
