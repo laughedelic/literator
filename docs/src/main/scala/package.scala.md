@@ -11,7 +11,7 @@ import literator.FileUtils._
 
 package object literator {
 
-  implicit class FileLiterator(file: File) {
+  implicit class FileLiterator(root: File) {
 ```
 
 This is the key function. If the source file is a directory, it traverses it, takes all 
@@ -25,13 +25,20 @@ errors, it returns themin a list.
         , withIndex: Boolean = true
         ): List[String] = {
 
-      file getFileList { f => langMap.isDefinedAt(f.ext) } flatMap { child =>
+      val fileList = root getFileList { _.isSource }
+
+      fileList flatMap { child =>
 
         val base: File = destBase.getOrElse(new File("docs/src")).getCanonicalFile
-        val relative: Path = child.getCanonicalFile.getParentFile.relativePath(file)
-        val dest: File = new File(base, relative.toString)
-        val index = if (!withIndex) None
-                    else file getFileTree { f => f.isDirectory || langMap.isDefinedAt(f.ext) }
+        val relative: Path = child.getCanonicalFile.getParentFile.relativePath(root)
+        val destDir: File = new File(base, relative.toString)
+        val index = root getFileTree { f => f.isDirectory || f.isSource } match {
+            case Some(ix) if withIndex => Seq("------", "### Index", ix) mkString "\n\n"
+            case _ => ""
+          }
+        val linksList = fileList map { f =>
+            "["+f.relativePath(root).toString+"]: "+f.relativePath(child).toString+".md"
+          } mkString("\n")
 
         langMap.get(child.ext) flatMap { lang =>
 
@@ -42,19 +49,10 @@ errors, it returns themin a list.
           parsed match {
             case literator.NoSuccess(msg, _) => Some(child + " " + parsed)
             case literator.Success(result, _) => {
+              val text = Seq(result, index, linksList) mkString "\n\n"
 
-              val text = index match {
-                case None => result
-                case Some(ix) => Seq(
-                    result
-                  , "------"
-                  , "### Index"
-                  , ix.tree(child).mkString("\n")
-                  ).mkString("\n\n")
-              }
-
-              if (!dest.exists) dest.mkdirs
-              new File(dest, child.name+".md").write(text) 
+              if (!destDir.exists) destDir.mkdirs
+              new File(destDir, child.name+".md").write(text) 
 
               None
             }
@@ -80,11 +78,18 @@ errors, it returns themin a list.
 + src
   + main
     + scala
-      + [FileUtils.scala](FileUtils.scala.md)
-      + [LanguageMap.scala](LanguageMap.scala.md)
-      + [LiteratorCLI.scala](LiteratorCLI.scala.md)
-      + [LiteratorParsers.scala](LiteratorParsers.scala.md)
-      + [package.scala](package.scala.md)
+      + [FileUtils.scala][main/scala/FileUtils.scala]
+      + [LanguageMap.scala][main/scala/LanguageMap.scala]
+      + [LiteratorCLI.scala][main/scala/LiteratorCLI.scala]
+      + [LiteratorParsers.scala][main/scala/LiteratorParsers.scala]
+      + [package.scala][main/scala/package.scala]
   + test
     + scala
-      + [TestCode.scala](../../test/scala/TestCode.scala.md)
+      + [TestCode.scala][test/scala/TestCode.scala]
+
+[main/scala/FileUtils.scala]: FileUtils.scala.md
+[main/scala/LanguageMap.scala]: LanguageMap.scala.md
+[main/scala/LiteratorCLI.scala]: LiteratorCLI.scala.md
+[main/scala/LiteratorParsers.scala]: LiteratorParsers.scala.md
+[main/scala/package.scala]: package.scala.md
+[test/scala/TestCode.scala]: ../../test/scala/TestCode.scala.md
