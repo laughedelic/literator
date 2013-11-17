@@ -1,6 +1,6 @@
 /* ## Parsers */
 
-package ohnosequences.tools.literator
+package ohnosequences.literator.lib
 
 import scala.util.parsing.combinator._
 
