@@ -10,7 +10,7 @@ import literator.FileUtils._
 
 package object literator {
 
-  implicit class FileLiterator(file: File) {
+  implicit class FileLiterator(root: File) {
 
     /*  This is the key function. If the source file is a directory, it traverses it, takes all 
         children, parses each and writes a correcponding markdown file. If parser encounters some 
@@ -21,13 +21,20 @@ package object literator {
         , withIndex: Boolean = true
         ): List[String] = {
 
-      file getFileList { f => langMap.isDefinedAt(f.ext) } flatMap { child =>
+      val fileList = root getFileList { _.isSource }
+
+      fileList flatMap { child =>
 
         val base: File = destBase.getOrElse(new File("docs/src")).getCanonicalFile
-        val relative: Path = child.getCanonicalFile.getParentFile.relativePath(file)
-        val dest: File = new File(base, relative.toString)
-        val index = if (!withIndex) None
-                    else file getFileTree { f => f.isDirectory || langMap.isDefinedAt(f.ext) }
+        val relative: Path = child.getCanonicalFile.getParentFile.relativePath(root)
+        val destDir: File = new File(base, relative.toString)
+        val index = root getFileTree { f => f.isDirectory || f.isSource } match {
+            case Some(ix) if withIndex => Seq("------", "### Index", ix) mkString "\n\n"
+            case _ => ""
+          }
+        val linksList = fileList map { f =>
+            "["+f.relativePath(root).toString+"]: "+f.relativePath(child).toString+".md"
+          } mkString("\n")
 
         langMap.get(child.ext) flatMap { lang =>
 
@@ -38,19 +45,10 @@ package object literator {
           parsed match {
             case literator.NoSuccess(msg, _) => Some(child + " " + parsed)
             case literator.Success(result, _) => {
+              val text = Seq(result, index, linksList) mkString "\n\n"
 
-              val text = index match {
-                case None => result
-                case Some(ix) => Seq(
-                    result
-                  , "------"
-                  , "### Index"
-                  , ix.tree(child).mkString("\n")
-                  ).mkString("\n\n")
-              }
-
-              if (!dest.exists) dest.mkdirs
-              new File(dest, child.name+".md").write(text) 
+              if (!destDir.exists) destDir.mkdirs
+              new File(destDir, child.name+".md").write(text) 
 
               None
             }
