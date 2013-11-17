@@ -11,18 +11,16 @@ import LanguageMap._
 case class FileNode(f: File, t: List[FileNode]) {
   import FileUtils._
 
-  def mdLink(base: File): String = {
-    if (f.name.endsWith(".scala")) 
-      "["+f.name+"]("+f.relativePath(base).toString+".md)"
+  def link(base: File): String =
+    if (f.isSource) "["+f.name+"]["+f.relativePath(base)+"]"
     else f.name
+
+  def listTree(base: File): List[String] = {
+    ("+ " + link(base)) :: 
+    t.flatMap{ i: FileNode => i.listTree(base).map{ s: String => "  " + s } }
   }
 
-  def tree(base: File): List[String] = {
-    ("+ " + mdLink(base)) :: 
-    t.flatMap{ i: FileNode => i.tree(base).map{ s: String => "  " + s } }
-  }
-
-  override def toString: String = tree(f).mkString("\n")
+  override def toString: String = listTree(f).mkString("\n")
 }
 
 /* Let's extend `File` type with some useful functions */
@@ -42,7 +40,9 @@ object FileUtils {
 
     // name (last part after /) and extension
     def name: String = file.getCanonicalFile.getName
-    def ext: String = file.name.split("\\.").last
+    def ext: String = if (file.isDirectory) "" else file.name.split("\\.").last
+
+    def isSource: Boolean = langMap.isDefinedAt(file.ext)
 
     // traverses recursively and lists all _files_ passing the filter
     def getFileList(filter: (File => Boolean) = (_ => true)): List[File] =

@@ -141,11 +141,18 @@ with markdown backticks syntax.
 + src
   + main
     + scala
-      + [FileUtils.scala](FileUtils.scala.md)
-      + [LanguageMap.scala](LanguageMap.scala.md)
-      + [LiteratorCLI.scala](LiteratorCLI.scala.md)
-      + [LiteratorParsers.scala](LiteratorParsers.scala.md)
-      + [package.scala](package.scala.md)
+      + [FileUtils.scala][main/scala/FileUtils.scala]
+      + [LanguageMap.scala][main/scala/LanguageMap.scala]
+      + [LiteratorCLI.scala][main/scala/LiteratorCLI.scala]
+      + [LiteratorParsers.scala][main/scala/LiteratorParsers.scala]
+      + [package.scala][main/scala/package.scala]
   + test
     + scala
-      + [TestCode.scala](../../test/scala/TestCode.scala.md)
+      + [TestCode.scala][test/scala/TestCode.scala]
+
+[main/scala/FileUtils.scala]: FileUtils.scala.md
+[main/scala/LanguageMap.scala]: LanguageMap.scala.md
+[main/scala/LiteratorCLI.scala]: LiteratorCLI.scala.md
+[main/scala/LiteratorParsers.scala]: LiteratorParsers.scala.md
+[main/scala/package.scala]: package.scala.md
+[test/scala/TestCode.scala]: ../../test/scala/TestCode.scala.md
