@@ -37,8 +37,8 @@ One can override them, if it's needed for support of another language.
 They return the offset of the braces, which will be useful later.
 
 ```scala
-  def commentStart = spaces <~ lang.opening ^^ { _ + "  "}
-  def commentEnd   = spaces <~ lang.closing
+  def commentStart = spaces <~ lang.comment.start ^^ { _ + "  "}
+  def commentEnd   = spaces <~ lang.comment.end
 ```
 
 Using `escapedCode` parser we can ignore escaped closing 
@@ -98,12 +98,14 @@ same level. See this comment in the source for example.
 
 When parsing code blocks we should remember, that it
 can contain a comment-opening brace inside of a string.
-
-_Note:_ only double-quoted one-line strings are handled.
+So code is just strings or anything but comment.
 
 ```scala
+  def str: Parser[String] =
+    ("\"\"\"" | "\"") >> { q => many("\\\"" | anythingBut(q)) <~ q ^^ { q+_+q } }
+
   def code: Parser[Code] =
-    many1("\".*/\\*.*\"".r | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
+    many1(str | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
 ```
 
 Finally, we parse source as a list of chunks and

@@ -2,28 +2,29 @@
 
 package ohnosequences.tools.literator
 
-case class Language(syntax: String, opening: String, closing: String) 
+case class Comment(start: String, end: String, line: String)
+
+case class Language(syntax: String, ext: String, comment: Comment)
 
 object LanguageMap {
 
-  def CLike(syntax: String) = Language(syntax, "/*", "*/")
-  def PascalLike(syntax: String) = Language(syntax, "(*", "*)")
+  def clike = Comment("/*", "*/", "//")
 
-  val langMap: Map[String, Language] = Map(
-        "c"     -> CLike("c")
-      , "cpp"   -> CLike("cpp")
-      , "cs"    -> CLike("csharp")
-      , "m"     -> CLike("objc")
-      , "java"  -> CLike("java")
-      , "js"    -> CLike("javascript")
-      , "scala" -> CLike("scala")
-      , "php"   -> CLike("php")
-      , "hs"    -> Language("haskell", "{-", "-}")
-      , "clj"   -> Language("clojure", "(comment ", ")")
-      , "pas"   -> PascalLike("pascal")
-      , "ml"    -> PascalLike("ocaml")
-      , "sml"   -> PascalLike("sml")
-      , "applescript" -> PascalLike("applescript")
+  val langs = List(
+        Language("c", "c", clike)
+      , Language("cpp", "cpp", clike)
+      , Language("csharp", "cs", clike)
+      , Language("objc", "m", clike)
+      , Language("java", "java", clike)
+      , Language("javascript", "js", clike)
+      , Language("scala", "scala", clike)
+      , Language("php", "php", clike)
+      , Language("haskell", "hs", Comment("{-", "-}", "--"))
+      , Language("clojure", "clj", Comment("(comment ", ")", ";"))
+      , Language("applescript", "applescript", Comment("(*", "*)", "--"))
+      , Language("pascal", "pas", Comment("(*", "*)", "//"))
       )
+
+  val langMap: Map[String, Language] = Map(langs map { l => (l.ext, l) }: _*)
 
 }
