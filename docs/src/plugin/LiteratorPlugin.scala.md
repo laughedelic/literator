@@ -1,3 +1,5 @@
+
+```scala
 package ohnosequences.literator.plugin
 
 import sbt._
@@ -29,3 +31,15 @@ object LiteratorPlugin extends sbt.Plugin {
   )
 
 }
+
+```
+
+
+------
+
+### Index
+
++ scala
+  + [LiteratorPlugin.scala][LiteratorPlugin.scala]
+
+[LiteratorPlugin.scala]: LiteratorPlugin.scala.md
