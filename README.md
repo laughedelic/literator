@@ -1,7 +1,7 @@
 Literator
 =========
 
-<a href="http://twitter.com/home/?status=Thanks @%40laughedelic for making Literator: https%3A%2F%2Fgithub.com%2Flaughedelic%2Fliterator"><img src="https://s3.amazonaws.com/github-thank-you-button/thank-you-button.png" alt="Say Thanks" /></a>
+
 
 This is a simple tool, which **transforms your sources into markdown documentations for themselves**. It just reads a source file, turns block comments into normal text and surrounds code with markdown backticks syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. The name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not really supported by the language.
 
@@ -131,6 +131,11 @@ Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like t
 - secondly, I want to keep things simple, and I like markdown as an "intermediate" format, for example it's handy to have just markdown documents on github, as it will render them nicely, and then generate from them htmls for a web-site, if needed, using your favourite tool and templates;
 - finally, most of such tools support only one-line comments and ignore block comments, while I want the opposite: write comments as a normal text and have ignored small comments in code;
 - and yes, it's "quick and dirty" — I don't like such things, better to have something simple, but nice.
+
+
+### Thank me
+
+If you find Literator useful, send a tweet with this funny button: <a href="http://twitter.com/home/?status=Thanks @laughedelic for making Literator: https%3A%2F%2Fgithub.com%2Flaughedelic%2Fliterator"><img src="https://s3.amazonaws.com/github-thank-you-button/thank-you-button.png" alt="Say Thanks" /></a>
 
 
 [lib/FileUtils]: docs/src/lib/FileUtils.scala.md
