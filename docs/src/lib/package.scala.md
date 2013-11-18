@@ -1,15 +1,15 @@
 ### Working with files
 
 ```scala
-package ohnosequences.tools
+package ohnosequences.literator
 
 import java.io._
 import java.nio.file.Path
 
-import literator.LanguageMap._
-import literator.FileUtils._
+import lib.LanguageMap._
+import lib.FileUtils._
 
-package object literator {
+package object lib {
 
   implicit class FileLiterator(root: File) {
 ```
@@ -29,9 +29,6 @@ errors, it returns themin a list.
 
       fileList flatMap { child =>
 
-        val base: File = destBase.getOrElse(new File("docs/src")).getCanonicalFile
-        val relative: Path = child.getCanonicalFile.getParentFile.relativePath(root)
-        val destDir: File = new File(base, relative.toString)
         val index = root getFileTree { f => f.isDirectory || f.isSource } match {
             case Some(ix) if withIndex => Seq("------", "### Index", ix) mkString "\n\n"
             case _ => ""
@@ -51,8 +48,13 @@ errors, it returns themin a list.
             case literator.Success(result, _) => {
               val text = Seq(result, index, linksList) mkString "\n\n"
 
-              if (!destDir.exists) destDir.mkdirs
-              new File(destDir, child.name+".md").write(text) 
+              destBase map { db =>
+                val base: File = db.getCanonicalFile
+                val relative: Path = child.getCanonicalFile.getParentFile.relativePath(root)
+                val destDir: File = new File(base, relative.toString)
+                if (!destDir.exists) destDir.mkdirs
+                new File(destDir, child.name+".md").write(text) 
+              }
 
               None
             }
@@ -75,21 +77,13 @@ errors, it returns themin a list.
 
 ### Index
 
-+ src
-  + main
-    + scala
-      + [FileUtils.scala][main/scala/FileUtils.scala]
-      + [LanguageMap.scala][main/scala/LanguageMap.scala]
-      + [LiteratorCLI.scala][main/scala/LiteratorCLI.scala]
-      + [LiteratorParsers.scala][main/scala/LiteratorParsers.scala]
-      + [package.scala][main/scala/package.scala]
-  + test
-    + scala
-      + [TestCode.scala][test/scala/TestCode.scala]
++ scala
+  + [FileUtils.scala][FileUtils.scala]
+  + [LanguageMap.scala][LanguageMap.scala]
+  + [LiteratorParsers.scala][LiteratorParsers.scala]
+  + [package.scala][package.scala]
 
-[main/scala/FileUtils.scala]: FileUtils.scala.md
-[main/scala/LanguageMap.scala]: LanguageMap.scala.md
-[main/scala/LiteratorCLI.scala]: LiteratorCLI.scala.md
-[main/scala/LiteratorParsers.scala]: LiteratorParsers.scala.md
-[main/scala/package.scala]: package.scala.md
-[test/scala/TestCode.scala]: ../../test/scala/TestCode.scala.md
+[FileUtils.scala]: FileUtils.scala.md
+[LanguageMap.scala]: LanguageMap.scala.md
+[LiteratorParsers.scala]: LiteratorParsers.scala.md
+[package.scala]: package.scala.md

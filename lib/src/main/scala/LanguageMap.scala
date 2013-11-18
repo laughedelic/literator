@@ -1,6 +1,6 @@
 /* ## Language map */
 
-package ohnosequences.tools.literator
+package ohnosequences.literator.lib
 
 case class Comment(start: String, end: String, line: String)
 
