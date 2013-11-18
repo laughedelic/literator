@@ -1,14 +1,14 @@
 /* ### Working with files */
 
-package ohnosequences.tools
+package ohnosequences.literator
 
 import java.io._
 import java.nio.file.Path
 
-import literator.LanguageMap._
-import literator.FileUtils._
+import lib.LanguageMap._
+import lib.FileUtils._
 
-package object literator {
+package object lib {
 
   implicit class FileLiterator(root: File) {
 
@@ -25,9 +25,6 @@ package object literator {
 
       fileList flatMap { child =>
 
-        val base: File = destBase.getOrElse(new File("docs/src")).getCanonicalFile
-        val relative: Path = child.getCanonicalFile.getParentFile.relativePath(root)
-        val destDir: File = new File(base, relative.toString)
         val index = root getFileTree { f => f.isDirectory || f.isSource } match {
             case Some(ix) if withIndex => Seq("------", "### Index", ix) mkString "\n\n"
             case _ => ""
@@ -47,8 +44,13 @@ package object literator {
             case literator.Success(result, _) => {
               val text = Seq(result, index, linksList) mkString "\n\n"
 
-              if (!destDir.exists) destDir.mkdirs
-              new File(destDir, child.name+".md").write(text) 
+              destBase map { db =>
+                val base: File = db.getCanonicalFile
+                val relative: Path = child.getCanonicalFile.getParentFile.relativePath(root)
+                val destDir: File = new File(base, relative.toString)
+                if (!destDir.exists) destDir.mkdirs
+                new File(destDir, child.name+".md").write(text) 
+              }
 
               None
             }

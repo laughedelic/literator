@@ -1,6 +1,6 @@
 /* ## Generic file utilities */
 
-package ohnosequences.tools.literator
+package ohnosequences.literator.lib
 
 import java.io._
 import java.nio.file.Path
