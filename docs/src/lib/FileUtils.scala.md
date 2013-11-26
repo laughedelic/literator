@@ -37,34 +37,47 @@ object FileUtils {
   def file(path: String): File = new File(path)
 
   implicit class FileOps(file: File) {
+```
 
-    // returns path of `file` relatively to `base`
+Returning path of `file` relatively to `base`
+
+```scala
     def relativePath(base: File): Path = {
       val b = if (base.isDirectory) base.getCanonicalFile 
               else base.getCanonicalFile.getParentFile
       b.toPath.relativize(file.getCanonicalFile.toPath)
     }
+```
 
-    // name (last part after /) and extension
+Name (last part after `/`) and extension
+
+```scala
     def name: String = file.getCanonicalFile.getName
     def ext: String = if (file.isDirectory) "" else file.name.split("\\.").last
+```
 
-    def isSource: Boolean = langMap.isDefinedAt(file.ext)
+Traversing recursively and listing all _files_ passing the filter
 
-    // traverses recursively and lists all _files_ passing the filter
+```scala
     def getFileList(filter: (File => Boolean) = (_ => true)): List[File] =
       if (file.isDirectory) file.listFiles.toList.flatMap(_.getFileList(filter))
       else if (filter(file)) List(file) else List()
+```
 
-    // traverses recursively and builds file hierarchy tree
+Traversing recursively and building file hierarchy tree
+
+```scala
     def getFileTree(filter: (File => Boolean) = (_ => true)): Option[FileNode] =
       if (!filter(file)) None
       else Some(FileNode(file, 
             if (file.isDirectory) file.listFiles.toList.map(_.getFileTree(filter)).flatten 
             else List()
            ))
+```
 
-    // just writes to the file
+Just writing to the file
+
+```scala
     def write(text: String) = {
       import sys.process._
       Seq("echo", text) #> file !

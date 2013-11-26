@@ -14,9 +14,15 @@ package object lib {
   implicit class FileLiterator(root: File) {
 ```
 
+Checks that the file has a known source format
+
+```scala
+    def isSource: Boolean = langMap.isDefinedAt(root.ext)
+```
+
 This is the key function. If the source file is a directory, it traverses it, takes all 
 children, parses each and writes a correcponding markdown file. If parser encounters some 
-errors, it returns themin a list.
+errors, it returns them in a list.
 
 
 ```scala
@@ -24,21 +30,38 @@ errors, it returns themin a list.
           destBase: Option[File] = None
         , withIndex: Boolean = true
         ): List[String] = {
+```
 
+First we can generate index section
+
+```scala
+      val index = root getFileTree { f => f.isDirectory || f.isSource } match {
+          case Some(ix) if withIndex => Seq("------", "### Index", ix) mkString "\n\n"
+          case _ => ""
+        }
+```
+
+Then we start with traversing list of source files
+
+```scala
       val fileList = root getFileList { _.isSource }
 
       fileList flatMap { child =>
+```
 
-        val index = root getFileTree { f => f.isDirectory || f.isSource } match {
-            case Some(ix) if withIndex => Seq("------", "### Index", ix) mkString "\n\n"
-            case _ => ""
-          }
+And for each of them we generate a block of relative links
+
+```scala
         val linksList = fileList map { f =>
             "["+f.relativePath(root).toString+"]: "+f.relativePath(child).toString+".md"
           } mkString("\n")
 
         langMap.get(child.ext) flatMap { lang =>
+```
 
+Knowing the language of the source we can parse it
+
+```scala
           val literator = LiteratorParsers(lang)
           val src = scala.io.Source.fromFile(child).mkString
           val parsed = literator.parseAll(literator.markdown, src) 
@@ -47,7 +70,11 @@ errors, it returns themin a list.
             case literator.NoSuccess(msg, _) => Some(child + " " + parsed)
             case literator.Success(result, _) => {
               val text = Seq(result, index, linksList) mkString "\n\n"
+```
 
+And if we parsed something, we write it to the file
+
+```scala
               destBase map { db =>
                 val base: File = db.getCanonicalFile
                 val relative: Path = child.getCanonicalFile.getParentFile.relativePath(root)
@@ -55,7 +82,6 @@ errors, it returns themin a list.
                 if (!destDir.exists) destDir.mkdirs
                 new File(destDir, child.name+".md").write(text) 
               }
-
               None
             }
           }

@@ -31,25 +31,23 @@ object FileUtils {
 
   implicit class FileOps(file: File) {
 
-    // returns path of `file` relatively to `base`
+    /* Returning path of `file` relatively to `base` */
     def relativePath(base: File): Path = {
       val b = if (base.isDirectory) base.getCanonicalFile 
               else base.getCanonicalFile.getParentFile
       b.toPath.relativize(file.getCanonicalFile.toPath)
     }
 
-    // name (last part after /) and extension
+    /* Name (last part after `/`) and extension */
     def name: String = file.getCanonicalFile.getName
     def ext: String = if (file.isDirectory) "" else file.name.split("\\.").last
 
-    def isSource: Boolean = langMap.isDefinedAt(file.ext)
-
-    // traverses recursively and lists all _files_ passing the filter
+    /* Traversing recursively and listing all _files_ passing the filter */
     def getFileList(filter: (File => Boolean) = (_ => true)): List[File] =
       if (file.isDirectory) file.listFiles.toList.flatMap(_.getFileList(filter))
       else if (filter(file)) List(file) else List()
 
-    // traverses recursively and builds file hierarchy tree
+    /* Traversing recursively and building file hierarchy tree */
     def getFileTree(filter: (File => Boolean) = (_ => true)): Option[FileNode] =
       if (!filter(file)) None
       else Some(FileNode(file, 
@@ -57,7 +55,7 @@ object FileUtils {
             else List()
            ))
 
-    // just writes to the file
+    /* Just writing to the file */
     def write(text: String) = {
       import sys.process._
       Seq("echo", text) #> file !
