@@ -6,6 +6,8 @@ organization in ThisBuild := "ohnosequences"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test"
 
+generateDocs in ThisBuild := {}
+
 // subprojects:
 lazy val lib = project
 lazy val app = project dependsOn lib
