@@ -1,10 +1,10 @@
-/* ### Parsers */
+/* ## Parsers */
 
-package ohnosequences.tools
+package ohnosequences.literator.lib
 
 import scala.util.parsing.combinator._
 
-case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
+case class LiteratorParsers(val lang: Language) extends RegexParsers {
 
   // By default `RegexParsers` ignore ALL whitespaces in the input
   override def skipWhitespace = false
@@ -24,24 +24,16 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
   def many (p: => Parser[String]): Parser[String] = p.* ^^ (_.mkString)
   def emptyLine: Parser[String] = """^[ \t]*""".r ~> eol
   def anythingBut[T](p: => Parser[T]): Parser[String] = guard(not(p)) ~> (char | eol)
+  def surrounded(left: String, right: String)(inner: Parser[String] = failure("")) = 
+    left ~> many(inner | anythingBut(right)) <~ right ^^ { left+_+right }
 
 
   /*  Here are the parsers for the comment opening and closing braces.
       One can override them, if it's needed for support of another language. 
       They return the offset of the braces, which will be useful later. */
-  def commentStart = spaces <~ "/*" ^^ { _ + "  "}
-  def commentEnd   = spaces <~ "*/"
+  def commentStart = spaces <~ lang.comment.start ^^ { _ + "  "}
+  def commentEnd   = spaces <~ lang.comment.end
 
-  /*` Using `escapedCode` parser we can ignore escaped closing 
-    ` comment brace inside of a comment. 
-    ` 
-    ` _Note:_ the only limitation is that you cannot use an escaped
-    `  block of code with a closing comment brace inside of a 
-    `  comment _with margin_.
-    */
-  def escapedCodeWith(esc: String) = esc ~> many(anythingBut(esc)) <~ esc ^^ { esc+_+esc }
-  def escapedCode = escapedCodeWith("```") | 
-                    escapedCodeWith("`")
 
   /*  When parsing block comments, we care about indentation and this is the
       only complex part of this code.
@@ -61,11 +53,16 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
       _Note:_ you can use space as a delimiter, just put _two_ spaces after the
       opening comment brace and remember to indent the following lines to the 
       same level. See this comment in the source for example.
+
+      _Note:_ you cannot use an escaped block of code with a closing comment brace 
+      inside of a comment with margin.
   */
   def comment: Parser[Comment] = {
     import java.util.regex.Pattern.quote
 
-    def inner = escapedCode | anythingBut(commentEnd | eol)
+    def innerCode = surrounded("```", "```")() | surrounded("`", "`")()
+    def innerComment: Parser[String] = surrounded(lang.comment.start, lang.comment.end)()
+    def inner = innerCode | innerComment | anythingBut(commentEnd | eol)
 
     commentStart >> { offset => (
       spaces ~> many(inner) <~ commentEnd        // there is only one line
@@ -86,10 +83,17 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
   /*. When parsing code blocks we should remember, that it
     . can contain a comment-opening brace inside of a string.
     . 
-    . _Note:_ only double-quoted one-line strings are handled.
+    . Also block comments may appear isinde of inline comments 
+    . (which we treat as code).
     */
+  def str: Parser[String] = 
+    surrounded("\"\"\"", "\"\"\"")() | // three quotes string
+    surrounded("\"", "\"")("\\\"")     // normal string may contain escaped quote
+
+  def lineComment: Parser[String] = surrounded(lang.comment.line, "\n")()
+
   def code: Parser[Code] =
-    many1("\".*/\\*.*\"".r | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
+    many1(str | lineComment | anythingBut(emptyLine.* ~ commentStart)) ^^ Code
 
 
   /*- Finally, we parse source as a list of chunks and
@@ -106,7 +110,7 @@ case class LiteratorParsers(val lang: String = "scala") extends RegexParsers {
       case Comment(str) => str
       case Code(str) => if (str.isEmpty) ""
         else Seq( ""
-                , "```"+lang
+                , "```"+lang.syntax
                 , str
                 , "```"
                 , "").mkString("\n")

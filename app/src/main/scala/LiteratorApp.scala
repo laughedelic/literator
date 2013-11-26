@@ -9,16 +9,13 @@
   + if not, it's set to `docs/` or `stdout` respectively
 */
 
-package ohnosequences.tools
+package ohnosequences.literator.app
 
 import java.io._
+import ohnosequences.literator.lib._
+import ohnosequences.literator.lib.FileUtils._
 
-object LiteratorCLI extends App {
+object LiteratorApp extends App {
   if (args.length < 1) sys.error("Need at least one argument")
-  else {
-    val inp = new File(args(0))
-    val dest = if (args.length > 1) Some(new File(args(1))) else None
-    if (inp.isDirectory) Literator.literateDir(inp, dest)
-    else Literator.literateFile(inp, dest)
-  }
+  else file(args(0)).literate(if (args.length > 1) Some(file(args(1))) else None)
 }
