@@ -1,3 +1,10 @@
+### Index
+
++ scala
+  + [LiteratorPlugin.scala](LiteratorPlugin.md)
+
+------
+
 ## Literator SBT Pluging
 
 ```scala
@@ -42,12 +49,3 @@ Initial settings for the keys:
 
 ```
 
-
-------
-
-### Index
-
-+ scala
-  + [LiteratorPlugin.scala][LiteratorPlugin.scala]
-
-[LiteratorPlugin.scala]: LiteratorPlugin.scala.md

@@ -1,3 +1,10 @@
+### Index
+
++ scala
+  + [LiteratorApp.scala](LiteratorApp.md)
+
+------
+
 ### Command line interface
 
 * Input: 
@@ -22,12 +29,3 @@ object LiteratorApp extends App {
 
 ```
 
-
-------
-
-### Index
-
-+ scala
-  + [LiteratorApp.scala][LiteratorApp.scala]
-
-[LiteratorApp.scala]: LiteratorApp.scala.md

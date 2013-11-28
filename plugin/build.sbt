@@ -4,11 +4,16 @@ Nice.scalaProject
 
 sbtPlugin := true
 
+
 name := "literator-plugin"
   
 description := "An sbt plugin which converts sources to markdown"
 
-generateDocs := {}
+
+docsInputDir := "plugin/src/main/scala"
+
+docsOutputDir := "docs/src/plugin"
+
 
 bintrayPublishSettings
 

@@ -1,3 +1,13 @@
+### Index
+
++ scala
+  + [FileUtils.scala](FileUtils.md)
+  + [LanguageMap.scala](LanguageMap.md)
+  + [LiteratorParsers.scala](LiteratorParsers.md)
+  + [package.scala](package.md)
+
+------
+
 ## Generic file utilities
 
 ```scala
@@ -88,18 +98,3 @@ Just writing to the file
 
 ```
 
-
-------
-
-### Index
-
-+ scala
-  + [FileUtils.scala][FileUtils.scala]
-  + [LanguageMap.scala][LanguageMap.scala]
-  + [LiteratorParsers.scala][LiteratorParsers.scala]
-  + [package.scala][package.scala]
-
-[FileUtils.scala]: FileUtils.scala.md
-[LanguageMap.scala]: LanguageMap.scala.md
-[LiteratorParsers.scala]: LiteratorParsers.scala.md
-[package.scala]: package.scala.md
