@@ -1,7 +1,7 @@
 ## Language map
 
 ```scala
-package ohnosequences.literator.lib
+package laughedelic.literator.lib
 
 case class Comment(start: String, end: String, line: String)
 

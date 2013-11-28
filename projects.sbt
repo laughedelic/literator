@@ -1,12 +1,16 @@
-lazy val literator = project in file(".") dependsOn(lib) aggregate(lib, app, plugin)
+Nice.scalaProject
 
+// root project:
+lazy val literator = project in file(".") dependsOn(lib) aggregate(lib, app, plugin) settings(
+  publish := {}
+, generateDocs := {}
+, libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test"
+)
+
+// common settings:
 homepage in ThisBuild := Some(url("https://github.com/laughedelic/literator"))
 
-organization in ThisBuild := "ohnosequences"
-
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test"
-
-generateDocs in ThisBuild := {}
+organization in ThisBuild := "laughedelic"
 
 // subprojects:
 lazy val lib = project

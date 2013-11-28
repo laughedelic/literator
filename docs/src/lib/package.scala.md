@@ -1,7 +1,7 @@
 ### Working with files
 
 ```scala
-package ohnosequences.literator
+package laughedelic.literator
 
 import java.io._
 import java.nio.file.Path

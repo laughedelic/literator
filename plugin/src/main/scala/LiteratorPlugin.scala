@@ -1,10 +1,10 @@
 /* ## Literator SBT Pluging */
 
-package ohnosequences.literator.plugin
+package laughedelic.literator.plugin
 
 import sbt._
 import Keys._
-import ohnosequences.literator.lib._
+import laughedelic.literator.lib._
 
 object LiteratorPlugin extends sbt.Plugin {
 

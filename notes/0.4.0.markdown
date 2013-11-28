@@ -12,3 +12,8 @@ For better modularity and convenience of use, separated project into several par
     + Has `docsOutputDirs` for adding them to `cleanFiles`
 * Command line application:
     + So far very primitive application; planning to add some nice options and conscript cover.
+
+Other changes:
+
+* Changed `organization` in sbt and package prefix in code to `laughedelic`
+* Now publishing everything to [Bintray](https://bintray.com/laughedelic)

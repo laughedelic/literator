@@ -1,3 +1,5 @@
+import bintray.Keys._
+
 Nice.scalaProject
 
 sbtPlugin := true
@@ -6,6 +8,10 @@ name := "literator-plugin"
   
 description := "An sbt plugin which converts sources to markdown"
 
-bucketSuffix := "era7.com"
+generateDocs := {}
 
-generateDocs in ThisBuild := {}
+bintrayPublishSettings
+
+repository in bintray := "sbt-plugins"
+
+bintrayOrganization in bintray := None

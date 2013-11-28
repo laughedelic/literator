@@ -1,7 +1,7 @@
 ## Parsers
 
 ```scala
-package ohnosequences.literator.lib
+package laughedelic.literator.lib
 
 import scala.util.parsing.combinator._
 

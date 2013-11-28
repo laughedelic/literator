@@ -9,11 +9,11 @@
   + if not, it's set to `docs/` or `stdout` respectively
 */
 
-package ohnosequences.literator.app
+package laughedelic.literator.app
 
 import java.io._
-import ohnosequences.literator.lib._
-import ohnosequences.literator.lib.FileUtils._
+import laughedelic.literator.lib._
+import laughedelic.literator.lib.FileUtils._
 
 object LiteratorApp extends App {
   if (args.length < 1) sys.error("Need at least one argument")

@@ -1,7 +1,7 @@
-package ohnosequences.tools.literator.tests
+package laughedelic.tools.literator.tests
 
-import ohnosequences.literator.lib._
-import ohnosequences.literator.lib.FileUtils._
+import laughedelic.literator.lib._
+import laughedelic.literator.lib.FileUtils._
 import org.scalatest._
 
 class SelfDocumentSuite extends FunSuite {
