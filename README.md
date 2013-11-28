@@ -23,6 +23,10 @@ Literator consists of three components:
 If you want to use the library in your Scala code, first, add this dependency to your `build.sbt`:
 
 ```scala
+resolvers += "laughedelic maven releases" at "http://dl.bintray.com/laughedelic/maven"
+// OR if you use bintray-sbt plugin:
+// resolvers += bintray.Opts.resolver.repo("laughedelic", "maven")
+
 libraryDependencies += "laughedelic" %% "literator-lib" % "0.4.0"
 ```
 
@@ -67,6 +71,16 @@ See [it's source documentation][app/LiteratorApp] for a bit more information.
 To use this tool from sbt console, add the following to your `project/plugins.sbt`:
 
 ```scala
+resolvers ++= Seq(
+  "laughedelic maven releases" at "http://dl.bintray.com/laughedelic/maven"
+, Resolver.url("laughedelic sbt-plugins", url("http://dl.bintray.com/laughedelic/sbt-plugins"))(Resolver.ivyStylePatterns)
+)
+// OR if you use bintray-sbt plugin:
+// resolvers ++= Seq(
+//   bintray.Opts.resolver.repo("laughedelic", "maven")
+// , bintray.Opts.resolver.repo("laughedelic", "sbt-plugins")
+// )
+
 addSbtPlugin("laughedelic" % "literator-plugin" % "0.4.0")
 ```
 
