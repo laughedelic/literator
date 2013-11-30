@@ -10,5 +10,7 @@ docsInputDir := "lib/src/main/scala"
 
 docsOutputDir := "docs/src/lib"
 
+test <<= generateDocs
+
 
 bintrayPublishSettings

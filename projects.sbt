@@ -1,10 +1,12 @@
 Nice.scalaProject
 
 
-// root project settings:
+// root project is only for aggregating:
 publish := {}
 
 generateDocs := {}
+
+test := {}
 
 
 // common settings:
