@@ -12,8 +12,6 @@ docsInputDir := "app/src/main/scala"
 
 docsOutputDir := "docs/src/app"
 
-test <<= generateDocs
-
 
 libraryDependencies ++= Seq (
   "org.rogach" %% "scallop" % "0.9.4"

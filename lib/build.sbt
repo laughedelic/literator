@@ -10,7 +10,8 @@ docsInputDir := "lib/src/main/scala"
 
 docsOutputDir := "docs/src/lib"
 
-test <<= generateDocs
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.0" % "test"
 
 
 bintrayPublishSettings

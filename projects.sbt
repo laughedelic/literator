@@ -6,8 +6,6 @@ publish := {}
 
 generateDocs := {}
 
-test := {}
-
 
 // common settings:
 homepage in ThisBuild := Some(url("https://github.com/laughedelic/literator"))
