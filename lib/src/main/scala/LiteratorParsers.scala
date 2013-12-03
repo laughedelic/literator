@@ -40,12 +40,13 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
   }
 
 
-  /* When parsing the comment opening, we remember the offset for the content
+  /* When parsing the comment opening brace, we remember the offset for the content
      Note that [scaladoc-style comments](http://docs.scala-lang.org/style/scaladoc.html) 
      are ignored.
   */
-  def commentStart = spaces ~+ (lang.comment.start ^^ { _.replaceAll(".", " ") }) <~ 
-    ((guard(not("*")) | (spaces ~ guard(eol))) ^^^ "") ~+ (" ").?
+  def commentStart = spaces ~+ (lang.comment.start ^^ { _.replaceAll(".", " ") }) ~+ 
+    (((spaces ~ guard(eol)) ^^^ "") | // if the first row is empty, ignore it
+     (guard(not("*")) ~> " ".?))      // not scaladoc and an optional space
 
   /* Closing comment brace is just ignored */
   def commentEnd = spaces ~ lang.comment.end ^^^ ""
