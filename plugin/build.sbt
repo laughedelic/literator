@@ -10,9 +10,11 @@ name := "literator-plugin"
 description := "An sbt plugin which converts sources to markdown"
 
 
-docsInputDir := "plugin/src/main/scala"
+// docsInputDir := "plugin/src/main/scala"
 
-docsOutputDir := "docs/src/plugin"
+// docsOutputDir := "docs/src/plugin"
+
+generateDocs := {}
 
 
 bintrayPublishSettings
