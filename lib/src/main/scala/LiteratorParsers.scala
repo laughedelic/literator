@@ -14,7 +14,7 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
   case class Comment(str: String) extends Chunk
   case class Code(str: String) extends Chunk
 
-  /* Here are some useful generic parsers. */
+  /* ### Some useful generic parsers */
   type PS = Parser[String]
 
   implicit class UsefulCombinators(p: PS) {
@@ -39,38 +39,39 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
     { _.replaceAllLiterally("\n"+offset, "\n") }
   }
 
+  /* ### Block comments parsing */
 
-  /* When parsing the comment opening brace, we remember the offset for the content
-     Note that [scaladoc-style comments](http://docs.scala-lang.org/style/scaladoc.html) 
-     are ignored.
+  /* - When parsing the comment opening brace, we remember the offset for the content
+       Note that [scaladoc-style comments](http://docs.scala-lang.org/style/scaladoc.html) 
+       are ignored.
   */
   def commentStart = spaces ~+ (lang.comment.start ^^ { _.replaceAll(".", " ") }) ~+ 
     (((spaces ~ guard(eol)) ^^^ "") | // if the first row is empty, ignore it
      (guard(not("*")) ~> " ".?))      // not scaladoc and an optional space
 
-  /* Closing comment brace is just ignored */
+  /* - Closing comment brace is just ignored */
   def commentEnd = spaces ~ lang.comment.end ^^^ ""
 
-  /* Comments can look like this:
+  /* - Comments can look like this:
 
-     ```
-     /* Just a block comment on one line */
-     var now = System.currentTimeMillis
+       ```
+       /* Just a block comment on one line */
 
-     /* Margin is determined by the opening comment brace identation
-        and an optional one space (like in this case).
-        Next lines should have at least the same identation. */
-     val bar = qux(foo)
-      
-     /*
-       Alternatively you can start text from the next line.
-       The rule is the same: at least the identation of the 
-       opening comment brace + optional space (not in this case).
-     */
-     lazy val buz = 1/0
-     ```
+       /* Margin is determined by the opening comment brace identation
+          and an optional one space (like in this case).
+          Next lines should have at least the same identation. */
+        
+       /*
+         Alternatively you can start text from the next line.
+         The rule is simple: at least the identation of the 
+         opening comment brace.
+       */
+       ```
+  */
 
-     Here is the parser for it:
+  /* Note, that all this identation business is _not strict_, i.e. the offset 
+     is just stripped after parsing, so if you have a line having less identation, 
+     it will have "literal" identation, as you see in the code.
   */
   def comment: Parser[Comment] = {
     // Inside of a block comment we can have 
@@ -85,6 +86,8 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
 
     commentStart >> { offset => surrounded("", commentEnd, inner, offset) } ^^ Comment
   }
+
+  /* ### Code blocks parsing */
 
   /* When parsing code blocks we should remember, that it
      can contain a comment-opening brace inside of a string.
@@ -103,7 +106,9 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
   }
 
 
-  /* Finally, we parse source as a list of chunks and
+  /* ### Sources parsing
+
+     Finally, we parse source as a list of chunks and
      transform it to markdown, surrounding code blocks 
      with markdown backticks syntax.
   */
