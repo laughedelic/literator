@@ -1,8 +1,6 @@
 Literator
 =========
 
-
-
 This is a simple tool, which **transforms your sources into markdown documentations for themselves**. It just reads a source file, turns block comments into normal text and surrounds code with markdown backticks syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. The name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not really supported by the language.
 
 So you can write your code and use markdown syntax in comments (which keeps your sources readable), and then transform it to a markdown document, from which you can generate a nice _html_ or _pdf_ or whatever else, using [your favourite markdown processor](http://johnmacfarlane.net/pandoc/).
@@ -148,9 +146,9 @@ Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like t
 If you find Literator useful, send a tweet with this funny button: <a href="http://twitter.com/home/?status=Thanks @laughedelic for making Literator: https%3A%2F%2Fgithub.com%2Flaughedelic%2Fliterator"><img src="https://s3.amazonaws.com/github-thank-you-button/thank-you-button.png" alt="Say Thanks" /></a>
 
 
-[lib/FileUtils]: docs/src/lib/FileUtils.md
-[lib/LanguageMap]: docs/src/lib/LanguageMap.md
-[lib/LiteratorParsers]: docs/src/lib/LiteratorParsers.md
-[lib/package]: docs/src/lib/package.md
-[app/LiteratorApp]: docs/src/app/LiteratorApp.md
-[plugin/LiteratorPlugin]: docs/src/plugin/LiteratorPlugin.md
+[lib/FileUtils]: docs/src/lib/FileUtils.scala.md
+[lib/LanguageMap]: docs/src/lib/LanguageMap.scala.md
+[lib/LiteratorParsers]: docs/src/lib/LiteratorParsers.scala.md
+[lib/package]: docs/src/lib/package.scala.md
+[app/LiteratorApp]: docs/src/app/LiteratorApp.scala.md
+[plugin/LiteratorPlugin]: docs/src/plugin/LiteratorPlugin.scala.md
