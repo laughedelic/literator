@@ -2,6 +2,7 @@ resolvers += "Era7 Releases" at "http://releases.era7.com.s3.amazonaws.com"
 
 addSbtPlugin("ohnosequences" % "nice-sbt-settings" % "0.3.1")
 
+addSbtPlugin("ohnosequences" % "sbt-github-release" % "0.1.0")
 
 resolvers += Resolver.url(
   "bintray-sbt-plugin-releases",

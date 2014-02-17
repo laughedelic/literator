@@ -12,14 +12,16 @@ lazy val commonSettings: Seq[Setting[_]] =
     organization := "laughedelic"
   )
 
-commonSettings
-
 // subprojects:
 lazy val lib = project settings(commonSettings: _*)
 lazy val app = project settings(commonSettings: _*) dependsOn lib
 lazy val plugin = project settings(commonSettings: _*) dependsOn lib
 
 // root project is only for aggregating:
+commonSettings
+
+GithubRelease.defaults
+
 publish := {}
 
 Literator.docsMap := Map()
