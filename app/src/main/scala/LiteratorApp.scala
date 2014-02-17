@@ -13,7 +13,7 @@ import buildinfo._
 /* This is configuration class, defining command line options using Scallop */
 case class AppConf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
-  version(s"""|literator ${BuildInfo.version} - generating docs from sources
+  version(s"""|literator_ ${BuildInfo.version} - generating docs from sources
               |(c) 2013 Alexey Alekhin (laughedelic)
               |""".stripMargin)
 
