@@ -15,9 +15,9 @@ package object lib {
     /* Checks that the file has a known source format */
     def isSource: Boolean = langMap.isDefinedAt(root.ext)
 
-    /*  This is the key function. If the source file is a directory, it traverses it, takes all 
-        children, parses each and writes a correcponding markdown file. If parser encounters some 
-        errors, it returns them in a list. 
+    /* This is the key function. If the source file is a directory, it traverses it, takes all 
+       children, parses each and writes a correcponding markdown file. If parser encounters some 
+       errors, it returns them in a list. 
     */
     def literate(
           destBase: Option[File] = None

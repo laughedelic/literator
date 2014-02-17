@@ -57,8 +57,7 @@ object FileUtils {
 
     /* Just writing to the file */
     def write(text: String) = {
-      import sys.process._
-      Seq("echo", text) #> file !
+      Some(new PrintWriter(file)).foreach{p => p.write(text); p.close}
     }
 
   }

@@ -1,5 +1,6 @@
-/* ## Literator SBT Pluging */
+## Literator SBT Pluging
 
+```scala
 package laughedelic.literator.plugin
 
 import sbt._
@@ -9,12 +10,19 @@ import laughedelic.literator.lib._
 object LiteratorPlugin extends sbt.Plugin {
 
   object Literator {
-    /* Setting keys */
+```
+
+Setting keys
+
+```scala
     lazy val docsMap = settingKey[Map[File, File]]("Mapping between input source and output docs directories")
     lazy val docsOutputDirs = settingKey[Seq[File]]("Output directories for the generated documentation")
     lazy val generateDocs = taskKey[Unit]("Generates markdown docs from code using literator tool")
+```
 
-    /* Initial settings for the keys: */
+Initial settings for the keys:
+
+```scala
     lazy val settings: Seq[Setting[_]] = Seq(
       docsMap := Map(file(sourceDirectory.value.toString) -> file("docs/src/"))
     , docsOutputDirs := docsMap.value.values.toSeq
@@ -34,3 +42,15 @@ object LiteratorPlugin extends sbt.Plugin {
   }
 
 }
+
+```
+
+
+------
+
+### Index
+
++ scala
+  + [LiteratorPlugin.scala][LiteratorPlugin.scala]
+
+[LiteratorPlugin.scala]: LiteratorPlugin.scala.md
