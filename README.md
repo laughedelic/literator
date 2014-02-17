@@ -1,8 +1,6 @@
 Literator
 =========
 
-
-
 This is a simple tool, which **transforms your sources into markdown documentations for themselves**. It just reads a source file, turns block comments into normal text and surrounds code with markdown backticks syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. The name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not really supported by the language.
 
 So you can write your code and use markdown syntax in comments (which keeps your sources readable), and then transform it to a markdown document, from which you can generate a nice _html_ or _pdf_ or whatever else, using [your favourite markdown processor](http://johnmacfarlane.net/pandoc/).
@@ -27,7 +25,7 @@ resolvers += "laughedelic maven releases" at "http://dl.bintray.com/laughedelic/
 // OR if you use bintray-sbt plugin:
 // resolvers += bintray.Opts.resolver.repo("laughedelic", "maven")
 
-libraryDependencies += "laughedelic" %% "literator-lib" % "0.4.0"
+libraryDependencies += "laughedelic" %% "literator-lib" % "0.5.0"
 ```
 
 Then you can use `literate` method of `File` to generate docs for your sources. For example:
@@ -48,22 +46,21 @@ See [it's source documentation][lib/package] for more details.
 
 ## Command line application
 
-To use this tool from the command line, download jar from [releases](https://github.com/laughedelic/literator/releases) and run it like
+To install this tool use conscript ([go install it](https://github.com/n8han/conscript#installation) if you don't have it yet):
 
 ```bash
-java -jar literator-app-0.4.0.jar  src/main/scala/  docs/src/
+cs laughedelic/literator
 ```
 
-or create a wrapper:
+then you can use it like
+
 ```bash
-#!/bin/sh
-java -jar literator-app-0.4.0.jar "$@"
+literator -M src/main/scala/=docs/src/
 ```
-then do `chmod a+x literator` and you can do `./literator  src/main/scala/  docs/src/`.
 
-See [it's source documentation][app/LiteratorApp] for a bit more information.
+You can set several mappings of the form `<sources dir>=<docs dir>` after the `-M` key (note that there are no spaces around `=`).
 
-> So far it's very primitive app, but I'm planning to add some nice [scallop](https://github.com/scallop/scallop) options parsing and distribute it using [conscript](https://github.com/n8han/conscript).
+See the [source documentation][app/LiteratorApp] for a bit more information.
 
 
 ## Sbt plugin
@@ -81,18 +78,18 @@ resolvers ++= Seq(
 // , bintray.Opts.resolver.repo("laughedelic", "sbt-plugins")
 // )
 
-addSbtPlugin("laughedelic" % "literator-plugin" % "0.4.0")
+addSbtPlugin("laughedelic" % "literator-plugin" % "0.5.0")
 ```
 
 And this to your `build.sbt`:
 
 ```scala
-literatorSettings
+Literator.settings
 ```
 
-Now you can set `docsMap` key, which contains `Map[File, File]` mapping between source directories and output documentation directories. By default it's just `Map(file("src/") -> file("docs/src/"))`. Using this map you can easily generate docs for several subprojects (like in this Literator itself).
+Now you can set `Literator.docsMap` key, which contains `Map[File, File]` mapping between source directories and output documentation directories. By default it's just `Map(file("src/") -> file("docs/src/"))`. Using this map you can easily generate docs for several subprojects (like in this Literator itself).
 
-To run Literator from sbt, just use `generateDocs` task.
+To run Literator from sbt, use `generateDocs` task.
 
 
 ### Cleaning docs
@@ -100,10 +97,10 @@ To run Literator from sbt, just use `generateDocs` task.
 If you change something in your source files hierarchy, you should clean old generated docs. In this case I recommend adding the following to your `build.sbt`:
 
 ```scala
-cleanFiles ++= docsOutputDirs.value
+cleanFiles ++= Literator.docsOutputDirs.value
 ```
 
-With this setting, docs directory will be clean every time you call `clean` task. Ensure that your docs output directories don't contain any non-generated files.
+With this setting, all you source docs directories will be cleaned every time you call `clean` task. Ensure that your docs output directories don't contain any non-generated files.
 
 
 ### Release process integration
@@ -116,9 +113,9 @@ import ReleaseKeys._
 
 // ... your settings
 
-literatorSettings
+Literator.settings
 
-lazy val genDocsForRelease = ReleaseStep({st => Project.extract(st).runTask(generateDocs, st)._1 })
+lazy val genDocsForRelease = ReleaseStep({st => Project.extract(st).runTask(Literator.generateDocs, st)._1 })
 
 releaseProcess := genDocsForRelease +: releaseProcess.value
 ```
@@ -143,14 +140,10 @@ Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like t
 - and yes, it's "quick and dirty" — I don't like such things, better to have something simple, but nice.
 
 
-### Thank me
 
-If you find Literator useful, send a tweet with this funny button: <a href="http://twitter.com/home/?status=Thanks @laughedelic for making Literator: https%3A%2F%2Fgithub.com%2Flaughedelic%2Fliterator"><img src="https://s3.amazonaws.com/github-thank-you-button/thank-you-button.png" alt="Say Thanks" /></a>
-
-
-[lib/FileUtils]: docs/src/lib/FileUtils.md
-[lib/LanguageMap]: docs/src/lib/LanguageMap.md
-[lib/LiteratorParsers]: docs/src/lib/LiteratorParsers.md
-[lib/package]: docs/src/lib/package.md
-[app/LiteratorApp]: docs/src/app/LiteratorApp.md
-[plugin/LiteratorPlugin]: docs/src/plugin/LiteratorPlugin.md
+[lib/FileUtils]: docs/src/lib/FileUtils.scala.md
+[lib/LanguageMap]: docs/src/lib/LanguageMap.scala.md
+[lib/LiteratorParsers]: docs/src/lib/LiteratorParsers.scala.md
+[lib/package]: docs/src/lib/package.scala.md
+[app/LiteratorApp]: docs/src/app/LiteratorApp.scala.md
+[plugin/LiteratorPlugin]: docs/src/plugin/LiteratorPlugin.scala.md

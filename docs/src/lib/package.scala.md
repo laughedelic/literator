@@ -1,13 +1,3 @@
-### Index
-
-+ scala
-  + [FileUtils.scala](FileUtils.md)
-  + [LanguageMap.scala](LanguageMap.md)
-  + [LiteratorParsers.scala](LiteratorParsers.md)
-  + [package.scala](package.md)
-
-------
-
 ### Working with files
 
 ```scala
@@ -32,7 +22,7 @@ Checks that the file has a known source format
 
 This is the key function. If the source file is a directory, it traverses it, takes all 
 children, parses each and writes a correcponding markdown file. If parser encounters some 
-errors, it returns them in a list.
+errors, it returns them in a list. 
 
 
 ```scala
@@ -108,3 +98,18 @@ And if we parsed something, we write it to the file
 
 ```
 
+
+------
+
+### Index
+
++ scala
+  + [FileUtils.scala][FileUtils.scala]
+  + [LanguageMap.scala][LanguageMap.scala]
+  + [LiteratorParsers.scala][LiteratorParsers.scala]
+  + [package.scala][package.scala]
+
+[FileUtils.scala]: FileUtils.scala.md
+[LanguageMap.scala]: LanguageMap.scala.md
+[LiteratorParsers.scala]: LiteratorParsers.scala.md
+[package.scala]: package.scala.md

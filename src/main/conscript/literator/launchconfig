@@ -1,0 +1,12 @@
+[app]
+  version: 0.5.0-SNAPSHOT
+  org: laughedelic
+  name: literator-app
+  class: laughedelic.literator.app.Main
+[scala]
+  version: 2.10.3
+[repositories]
+  local
+  laughedelic-bintray-maven: http://dl.bintray.com/laughedelic/maven
+  sonatype-oss-releases
+  maven-central

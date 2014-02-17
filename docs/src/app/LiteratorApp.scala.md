@@ -1,5 +1,6 @@
-/* ### Command line application */
+### Command line application
 
+```scala
 package laughedelic.literator.app
 
 import java.io._
@@ -8,21 +9,26 @@ import laughedelic.literator.lib.FileUtils._
 
 import org.rogach.scallop._
 import buildinfo._
+```
 
+This is configuration class, defining command line options using Scallop
 
-/* This is configuration class, defining command line options using Scallop */
+```scala
 case class AppConf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   version(s"""|literator_ ${BuildInfo.version} - generating docs from sources
               |(c) 2013 Alexey Alekhin (laughedelic)
               |""".stripMargin)
+```
 
-  /*  Using this option user can set the mapping between source input dirs and 
-      docs output dirs. For example,
-      `-M app/src=docs/src/app lib/src=docs/src/app`
-      becomes
-      `Map("app/src" -> "docs/src/app", "lib/src" -> "docs/src/app")`
-  */
+ Using this option user can set the mapping between source input dirs and 
+ docs output dirs. For example,
+ `-M app/src=docs/src/app lib/src=docs/src/app`
+ becomes
+ `Map("app/src" -> "docs/src/app", "lib/src" -> "docs/src/app")`
+
+
+```scala
   val docsMap = props[String](
         name = 'M'
       , descr = "Map between sources and docs directories"
@@ -31,25 +37,32 @@ case class AppConf(arguments: Seq[String]) extends ScallopConf(arguments) {
       )
   // TODO: validate existence of all files (+maybe warn if output dirs are not empty)
 }
+```
 
+This is the class that the sbt-launcher will use
 
-/* This is the class that the sbt-launcher will use */
+```scala
 class Main extends xsbti.AppMain {
   def run(config: xsbti.AppConfiguration) = new Exit(Main.exec(config.arguments))
 }
 
 case class Exit(val code: Int) extends xsbti.Exit
+```
 
+This object contains the actual code for running
 
-/* This object contains the actual code for running */
+```scala
 object Main {
   def exec(args: Array[String]): Int = {
 
     val conf = AppConf(args)
 
     if (conf.docsMap.isEmpty) conf.printHelp()
+```
 
-    /* Here we just iterate over the map, generate docs and output errors if any */
+Here we just iterate over the map, generate docs and output errors if any
+
+```scala
     conf.docsMap foreach { case (in, out) =>
       println("Generating documentation for " + in)
 
@@ -62,7 +75,22 @@ object Main {
 
     0
   }
+```
 
-  /* For testing within sbt 'run <args>' will execute this app */
+For testing within sbt 'run <args>' will execute this app
+
+```scala
   def main(args: Array[String]): Unit = exec(args)
 }
+
+```
+
+
+------
+
+### Index
+
++ scala
+  + [LiteratorApp.scala][LiteratorApp.scala]
+
+[LiteratorApp.scala]: LiteratorApp.scala.md
