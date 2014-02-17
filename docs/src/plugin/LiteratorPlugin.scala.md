@@ -25,7 +25,7 @@ Initial settings for the keys:
 ```scala
     lazy val settings: Seq[Setting[_]] = Seq(
       docsMap := Map(file(sourceDirectory.value.toString) -> file("docs/src/"))
-    , docsOutputDirs := docsMap.value.values.toSeq //map { baseDirectory.value / _.toString }
+    , docsOutputDirs := docsMap.value.values.toSeq
     , generateDocs := { 
         val s: TaskStreams = streams.value
         docsMap.value map { case (in, out) =>

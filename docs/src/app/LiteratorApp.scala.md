@@ -16,7 +16,7 @@ This is configuration class, defining command line options using Scallop
 ```scala
 case class AppConf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
-  version(s"""|literator ${BuildInfo.version} - generating docs from sources
+  version(s"""|literator_ ${BuildInfo.version} - generating docs from sources
               |(c) 2013 Alexey Alekhin (laughedelic)
               |""".stripMargin)
 ```
@@ -32,7 +32,7 @@ case class AppConf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val docsMap = props[String](
         name = 'M'
       , descr = "Map between sources and docs directories"
-      , keyName = "input"
+      , keyName = " input"
       , valueName = "output"
       )
   // TODO: validate existence of all files (+maybe warn if output dirs are not empty)
