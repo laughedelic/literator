@@ -2,6 +2,8 @@ Nice.scalaProject
 
 
 // root project settings:
+bintrayPublishSettings
+
 publish := {}
 
 generateDocs := {}
