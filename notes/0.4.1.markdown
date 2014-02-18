@@ -1,0 +1,1 @@
+* Bugfix for #12 (issue with writing to files on windows)
