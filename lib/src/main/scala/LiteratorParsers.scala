@@ -27,7 +27,7 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
     }
   }
 
-  def eol:    PS = "\n"
+  def eol:    PS = "\r".? ~> "\n"
   def spaces: PS = regex("""[ \t]*""".r)
   def char:   PS = regex(".".r) // any symbol except EOL
   def emptyLine: PS = spaces ~> eol

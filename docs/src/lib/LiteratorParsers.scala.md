@@ -34,7 +34,7 @@ A _chunk_ of source is either a block comment, or code
     }
   }
 
-  def eol:    PS = "\n"
+  def eol:    PS = "\r".? ~> "\n"
   def spaces: PS = regex("""[ \t]*""".r)
   def char:   PS = regex(".".r) // any symbol except EOL
   def emptyLine: PS = spaces ~> eol
