@@ -25,7 +25,7 @@ resolvers += "laughedelic maven releases" at "http://dl.bintray.com/laughedelic/
 // OR if you use bintray-sbt plugin:
 // resolvers += bintray.Opts.resolver.repo("laughedelic", "maven")
 
-libraryDependencies += "laughedelic" %% "literator-lib" % "0.5.0"
+libraryDependencies += "laughedelic" %% "literator-lib" % "0.5.1"
 ```
 
 Then you can use `literate` method of `File` to generate docs for your sources. For example:
