@@ -1,3 +1,15 @@
+val era7Publish = Command.command("era7Publish") { st: State =>
+  val newSt = sbtrelease.ReleaseStateTransformations.reapply(
+    Classpaths.publishSettings ++ Seq(
+    publishMavenStyle := true,
+    publishBucketSuffix := "era7.com",
+    publishTo := Some(publishS3Resolver.value)
+  ), st)
+  val extracted = Project.extract(newSt)
+  val ref = extracted.get(thisProjectRef)
+  extracted.runAggregated(publish in ref, newSt)
+}
+
 lazy val commonSettings: Seq[Setting[_]] =
   Nice.scalaProject ++
   Literator.settings ++ 
@@ -9,7 +21,8 @@ lazy val commonSettings: Seq[Setting[_]] =
     },
     cleanFiles ++= Literator.docsOutputDirs.value,
     homepage := Some(url("https://github.com/laughedelic/literator")),
-    organization := "laughedelic"
+    organization := "laughedelic",
+    commands += era7Publish
   )
 
 // subprojects:
@@ -19,8 +32,6 @@ lazy val plugin = project settings(commonSettings: _*) dependsOn lib
 
 // root project is only for aggregating:
 commonSettings
-
-GithubRelease.defaults
 
 publish := {}
 

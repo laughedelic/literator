@@ -7,7 +7,7 @@ resolvers ++= Seq(
   Resolver.url("bintray-sbt-plugin-releases", url("http://dl.bintray.com/content/sbt/sbt-plugin-releases"))(Resolver.ivyStylePatterns)
 )
 
-addSbtPlugin("ohnosequences" % "nice-sbt-settings" % "0.4.0-M2")
+addSbtPlugin("ohnosequences" % "nice-sbt-settings" % "0.4.0-RC2")
 
 addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.1")
 
