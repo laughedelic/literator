@@ -23,9 +23,8 @@ lazy val commonSettings: Seq[Setting[_]] =
     homepage := Some(url("https://github.com/laughedelic/literator")),
     organization := "laughedelic",
     commands += era7Publish,
-    publishMavenStyle := true,
     publishBucketSuffix := "era7.com",
-    publishTo := Some(publishS3Resolver.value)
+    GithubRelease.assets := Seq()
   )
 
 // subprojects:
