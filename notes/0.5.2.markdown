@@ -1,0 +1,2 @@
+* Fixed encoding bug (`java.nio.charset.MalformedInputException: Input length = 1` exception) (See #16)
+* Updated dependencies (ScalaTest, Scallop)
