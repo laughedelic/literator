@@ -19,7 +19,7 @@ lazy val commonSettings: Seq[Setting[_]] =
       val n = name.value.stripPrefix("literator-")
       Map(file(n+"/src/main/scala") -> file("docs/src/"+n))
     },
-    cleanFiles ++= Literator.docsOutputDirs.value,
+    // cleanFiles ++= Literator.docsOutputDirs.value,
     homepage := Some(url("https://github.com/laughedelic/literator")),
     organization := "laughedelic",
     commands += era7Publish

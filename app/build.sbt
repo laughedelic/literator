@@ -3,7 +3,7 @@ name := "literator-app"
 description := "A simple command line application which converts sources to markdown"
 
 libraryDependencies ++= Seq (
-  "org.rogach" %% "scallop" % "0.9.4"
+  "org.rogach" %% "scallop" % "0.9.5"
 // "org.scala-sbt" % "launcher-interface" % "0.12.1" % "provided"
 )
 
