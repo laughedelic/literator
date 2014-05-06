@@ -35,7 +35,6 @@ case class AppConf(arguments: Seq[String]) extends ScallopConf(arguments) {
       , keyName = " input"
       , valueName = "output"
       )
-  // TODO: validate existence of all files (+maybe warn if output dirs are not empty)
 }
 ```
 
