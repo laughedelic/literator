@@ -63,7 +63,7 @@ Knowing the language of the source we can parse it
 
 ```scala
           val literator = LiteratorParsers(lang)
-          val src = scala.io.Source.fromFile(child).mkString
+          val src = scala.io.Source.fromFile(child, "UTF-8").mkString
           val parsed = literator.parseAll(literator.markdown, src) 
 
           parsed match {
