@@ -14,7 +14,7 @@ import buildinfo._
 case class AppConf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   version(s"""|literator_ ${BuildInfo.version} - generating docs from sources
-              |(c) 2013 Alexey Alekhin (laughedelic)
+              |(c) 2014 Alexey Alekhin (laughedelic)
               |""".stripMargin)
 
   /*  Using this option user can set the mapping between source input dirs and 

@@ -55,6 +55,9 @@ object FileUtils {
             else List()
            ))
 
+    /* Read the contents of the file */
+    def read: String = scala.io.Source.fromFile(file, "UTF-8").mkString
+
     /* Just writing to the file */
     def write(text: String) = {
       Some(new PrintWriter(file)).foreach{p => p.write(text); p.close}

@@ -14,6 +14,10 @@ package object lib {
 
     /* Checks that the file has a known source format */
     def isSource: Boolean = langMap.isDefinedAt(root.ext)
+    def isMarkdown: Boolean = root.ext match {
+      case "md" | "mkd" | "mdown" | "markdown" => true
+      case _ => false
+    }
 
     /* This is the key function. If the source file is a directory, it traverses it, takes all 
        children, parses each and writes a correcponding markdown file. If parser encounters some 
@@ -31,8 +35,18 @@ package object lib {
         }
 
       /* Then we start with traversing list of source files */
-      val fileList = root getFileList { _.isSource }
+      val fileList = root getFileList { f => f.isSource || f.isMarkdown }
 
+      def writeResult(source: File, name: String, text: String): Unit = {
+        destBase map { base =>
+          val relative: Path = source.getCanonicalFile.getParentFile.relativePath(root)
+          val destDir: File = new File(base.getCanonicalFile, relative.toString)
+          if (!destDir.exists) destDir.mkdirs
+          new File(destDir, name).write(text) 
+        }
+      }
+
+      // TODO: this code is bad structured: look at all those } } } in the end... 
       fileList flatMap { child =>
 
         /* And for each of them we generate a block of relative links */
@@ -40,36 +54,35 @@ package object lib {
             "["+f.relativePath(root).toString+"]: "+f.relativePath(child).toString+".md"
           } mkString("\n")
 
-        langMap.get(child.ext) flatMap { lang =>
+        child.ext match {
+          case "md" | "mkd" | "mdown" | "markdown" => {
+            val text = Seq(child.read, linksList) mkString "\n\n"
+            writeResult(child, child.name, text)
+            None
+          }
+          case _ => {
 
-          /* Knowing the language of the source we can parse it */
-          val literator = LiteratorParsers(lang)
-          val src = scala.io.Source.fromFile(child, "UTF-8").mkString
-          val parsed = literator.parseAll(literator.markdown, src) 
+            langMap.get(child.ext) flatMap { lang =>
 
-          parsed match {
-            case literator.NoSuccess(msg, _) => Some(child + " " + parsed)
-            case literator.Success(result, _) => {
-              val text = Seq(result, index, linksList) mkString "\n\n"
+              /* Knowing the language of the source we can parse it */
+              val literator = LiteratorParsers(lang)
+              val parsed = literator.parseAll(literator.markdown, child.read) 
 
-              /* And if we parsed something, we write it to the file */
-              destBase map { db =>
-                val base: File = db.getCanonicalFile
-                val relative: Path = child.getCanonicalFile.getParentFile.relativePath(root)
-                val destDir: File = new File(base, relative.toString)
-                if (!destDir.exists) destDir.mkdirs
-                new File(destDir, child.name+".md").write(text) 
+              parsed match {
+                case literator.NoSuccess(msg, _) => Some(child + " " + parsed)
+                case literator.Success(result, _) => {
+                  val text = Seq(result, index, linksList) mkString "\n\n"
+
+                  /* And if we parsed something, we write it to the file */
+                  writeResult(child, child.name+".md", text)
+                  None
+                }
               }
-              None
             }
           }
-
         }
-
       }
     }
-
   }
-
 }
 

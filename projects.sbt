@@ -12,16 +12,17 @@ val era7Publish = Command.command("era7Publish") { st: State =>
 
 lazy val commonSettings: Seq[Setting[_]] =
   Nice.scalaProject ++
-  Literator.settings ++ 
+  // Literator.settings ++ 
   // bintrayPublishSettings ++
   Seq[Setting[_]](
-    Literator.docsMap := {
-      val n = name.value.stripPrefix("literator-")
-      Map(file(n+"/src/main/scala") -> file("docs/src/"+n))
-    },
+    // Literator.docsMap := {
+    //   val n = name.value.stripPrefix("literator-")
+    //   Map(file(n+"/src/main/scala") -> file("docs/src/"+n))
+    // },
     // cleanFiles ++= Literator.docsOutputDirs.value,
     homepage := Some(url("https://github.com/laughedelic/literator")),
     organization := "laughedelic",
+    // scalaVersion := "2.11.2",
     commands += era7Publish,
     publishBucketSuffix := "era7.com",
     GithubRelease.assets := Seq()

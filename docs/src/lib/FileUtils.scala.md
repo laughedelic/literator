@@ -75,6 +75,12 @@ Traversing recursively and building file hierarchy tree
            ))
 ```
 
+Read the contents of the file
+
+```scala
+    def read: String = scala.io.Source.fromFile(file, "UTF-8").mkString
+```
+
 Just writing to the file
 
 ```scala
@@ -102,3 +108,4 @@ Just writing to the file
 [LanguageMap.scala]: LanguageMap.scala.md
 [LiteratorParsers.scala]: LiteratorParsers.scala.md
 [package.scala]: package.scala.md
+[Readme.markdown]: Readme.markdown.md
