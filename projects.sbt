@@ -1,14 +1,14 @@
-val era7Publish = Command.command("era7Publish") { st: State =>
-  val newSt = sbtrelease.ReleaseStateTransformations.reapply(
-    Classpaths.publishSettings ++ Seq(
-    publishMavenStyle := true,
-    publishBucketSuffix := "era7.com",
-    publishTo := Some(publishS3Resolver.value)
-  ), st)
-  val extracted = Project.extract(newSt)
-  val ref = extracted.get(thisProjectRef)
-  extracted.runAggregated(publish in ref, newSt)
-}
+// val era7Publish = Command.command("era7Publish") { st: State =>
+//   val newSt = sbtrelease.ReleaseStateTransformations.reapply(
+//     Classpaths.publishSettings ++ Seq(
+//     publishMavenStyle := true,
+//     publishBucketSuffix := "era7.com",
+//     publishTo := Some(publishS3Resolver.value)
+//   ), st)
+//   val extracted = Project.extract(newSt)
+//   val ref = extracted.get(thisProjectRef)
+//   extracted.runAggregated(publish in ref, newSt)
+// }
 
 lazy val commonSettings: Seq[Setting[_]] =
   Nice.scalaProject ++
@@ -23,7 +23,7 @@ lazy val commonSettings: Seq[Setting[_]] =
     homepage := Some(url("https://github.com/laughedelic/literator")),
     organization := "laughedelic",
     // scalaVersion := "2.11.2",
-    commands += era7Publish,
+    // commands += era7Publish,
     publishBucketSuffix := "era7.com",
     GithubRelease.assets := Seq()
   )
