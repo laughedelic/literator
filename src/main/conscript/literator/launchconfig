@@ -4,7 +4,7 @@
   name: literator-app
   class: laughedelic.literator.app.Main
 [scala]
-  version: 2.11.2
+  version: 2.10.4
 [repositories]
   local
   laughedelic-bintray-maven: http://dl.bintray.com/laughedelic/maven

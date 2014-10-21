@@ -15,11 +15,11 @@ lazy val commonSettings: Seq[Setting[_]] =
   // Literator.settings ++ 
   // bintrayPublishSettings ++
   Seq[Setting[_]](
-    // Literator.docsMap := {
+    Literator.docsMap := Map(),
     //   val n = name.value.stripPrefix("literator-")
     //   Map(file(n+"/src/main/scala") -> file("docs/src/"+n))
     // },
-    // cleanFiles ++= Literator.docsOutputDirs.value,
+    cleanFiles += file("docs/src/"), //Literator.docsOutputDirs.value,
     homepage := Some(url("https://github.com/laughedelic/literator")),
     organization := "laughedelic",
     // scalaVersion := "2.11.2",
