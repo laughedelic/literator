@@ -25,7 +25,7 @@ If you want to use the library in your Scala code, first, add this dependency to
 ```scala
 resolvers += "Era7 maven releases" at "http://releases.era7.com.s3.amazonaws.com"
 
-libraryDependencies += "laughedelic" %% "literator-lib" % "0.5.2"
+libraryDependencies += "laughedelic" %% "literator-lib" % "<version>"
 ```
 
 Then you can use `literate` method of `File` to generate docs for your sources. For example:
@@ -70,7 +70,7 @@ To use this tool from sbt console, add the following to your `project/plugins.sb
 ```scala
 resolvers += "Era7 maven releases" at "http://releases.era7.com.s3.amazonaws.com"
 
-addSbtPlugin("laughedelic" % "literator-plugin" % "0.5.2")
+addSbtPlugin("laughedelic" % "literator-plugin" % "<version>")
 ```
 
 And this to your `build.sbt`:
