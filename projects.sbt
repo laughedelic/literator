@@ -13,7 +13,7 @@
 lazy val commonSettings: Seq[Setting[_]] =
   Nice.scalaProject ++
   // Literator.settings ++ 
-  // bintrayPublishSettings ++
+  bintrayPublishSettings ++
   Seq[Setting[_]](
     Literator.docsMap := Map(),
     //   val n = name.value.stripPrefix("literator-")

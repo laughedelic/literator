@@ -9,7 +9,7 @@ resolvers ++= Seq(
 
 addSbtPlugin("ohnosequences" % "nice-sbt-settings" % "0.4.0")
 
-addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.1")
+addSbtPlugin("me.lessis" % "bintray-sbt" % "0.1.2")
 
 
 // for app:
