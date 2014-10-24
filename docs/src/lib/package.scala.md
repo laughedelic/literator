@@ -126,4 +126,4 @@ And if we parsed something, we write it to the file
 [LanguageMap.scala]: LanguageMap.scala.md
 [LiteratorParsers.scala]: LiteratorParsers.scala.md
 [package.scala]: package.scala.md
-[Readme.markdown]: Readme.markdown.md
+[Readme.md]: Readme.md.md

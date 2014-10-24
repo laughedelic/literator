@@ -10,4 +10,4 @@ This directory contains sources of the literator library.
 [LanguageMap.scala]: LanguageMap.scala.md
 [LiteratorParsers.scala]: LiteratorParsers.scala.md
 [package.scala]: package.scala.md
-[Readme.markdown]: Readme.markdown.md
+[Readme.md]: Readme.md.md

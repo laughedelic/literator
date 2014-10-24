@@ -1,7 +1,7 @@
 Literator
 =========
 
-![TODOs by CodeNotes](http://codenotes.me/badge/13034201/todos.png)
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/laughedelic/literator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 This is a simple tool, which **transforms your sources into markdown documentations for themselves**. It just reads a source file, turns block comments into normal text and surrounds code with markdown backticks syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. The name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not really supported by the language.
 
