@@ -120,7 +120,7 @@ This will add docs generation step to the beginning of release process. It's eas
 
 ## Demo/Documentation
 
-You can see the result of running Literator on it's own sources in the [docs/src/](docs/src/) folder. See [library docs][docs/src/lib/] for example.
+You can see the result of running Literator on it's own sources in the [docs/src/](docs/src/) folder. See [library docs](docs/src/lib/) for example.
 
 
 ## FAQ
