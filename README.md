@@ -41,7 +41,7 @@ Some nice features:
 - it provides convenient list of links definitions for internal references 
 - it (optionally) generates index of the files in the given directory and appends it to each produced markdown file 
 
-See [it's source documentation][lib/package] for more details.
+See [its source documentation][lib/package] for more details.
 
 
 ## Command line application
@@ -120,7 +120,7 @@ This will add docs generation step to the beginning of release process. It's eas
 
 ## Demo/Documentation
 
-You can see the result of running Literator on it's own sources in the [docs/src/](docs/src/) folder. See [library docs](docs/src/lib/) for example.
+You can see the result of running Literator on its own sources in the [docs/src/](docs/src/) folder. See [library docs](docs/src/lib/) for example.
 
 
 ## FAQ
