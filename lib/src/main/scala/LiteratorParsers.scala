@@ -20,10 +20,10 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
   implicit class UsefulCombinators(p: PS) {
     // combine two parsers and concatenate their results
     def ~+[T](q: Parser[T]) = p ~ q ^^ { 
-      case a ~     (b: String) => a + b
-      case a ~ Some(b: String) => a + b
-      case a ~   (bs: List[_]) => a + bs.mkString
-      case a ~               _ => a
+      case a ~ Some(b)     => a + b.toString
+      case a ~ (b :: bs)   => a + (b :: bs).mkString
+      case a ~ (b: String) => a + b
+      case a ~ _           => a
     }
   }
 

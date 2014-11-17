@@ -1,29 +1,13 @@
-// val era7Publish = Command.command("era7Publish") { st: State =>
-//   val newSt = sbtrelease.ReleaseStateTransformations.reapply(
-//     Classpaths.publishSettings ++ Seq(
-//     publishMavenStyle := true,
-//     publishBucketSuffix := "era7.com",
-//     publishTo := Some(publishS3Resolver.value)
-//   ), st)
-//   val extracted = Project.extract(newSt)
-//   val ref = extracted.get(thisProjectRef)
-//   extracted.runAggregated(publish in ref, newSt)
-// }
-
 lazy val commonSettings: Seq[Setting[_]] =
   Nice.scalaProject ++
-  // Literator.settings ++ 
-  bintrayPublishSettings ++
+  // Comment our this line to publish to Era7 repository:
+  // bintrayPublishSettings ++
   Seq[Setting[_]](
     Literator.docsMap := Map(),
-    //   val n = name.value.stripPrefix("literator-")
-    //   Map(file(n+"/src/main/scala") -> file("docs/src/"+n))
-    // },
     cleanFiles += file("docs/src/"), //Literator.docsOutputDirs.value,
     homepage := Some(url("https://github.com/laughedelic/literator")),
     organization := "laughedelic",
-    // scalaVersion := "2.11.2",
-    // commands += era7Publish,
+    scalaVersion := "2.10.4",
     publishBucketSuffix := "era7.com",
     GithubRelease.assets := Seq()
   )
