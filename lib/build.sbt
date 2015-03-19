@@ -1,5 +1,4 @@
 name := "literator-lib"
-  
 description := "A simple library which converts sources to markdown"
 
 // crossScalaVersions := Seq("2.10.4", "2.11.0")
@@ -13,4 +12,4 @@ description := "A simple library which converts sources to markdown"
 //   }
 // }
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.5" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test

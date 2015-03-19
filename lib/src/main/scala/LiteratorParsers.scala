@@ -10,22 +10,19 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
   override def skipWhitespace = false
 
   /* A _chunk_ of source is either a block comment, or code */
-  trait Chunk
+  sealed trait Chunk
   case class Comment(str: String) extends Chunk
   case class Code(str: String) extends Chunk
 
   /* ### Some useful generic parsers */
   type PS = Parser[String]
 
-  implicit class UsefulCombinators(p: PS) {
-    // combine two parsers and concatenate their results
-    def ~+[T](q: Parser[T]) = p ~ q ^^ { 
-      case a ~ Some(b)     => a + b.toString
-      case a ~ (b :: bs)   => a + (b :: bs).mkString
-      case a ~ (b: String) => a + b
-      case a ~ _           => a
-    }
-  }
+  // implicit class UsefulCombinators(p: PS) {
+  //   // combine two parsers and concatenate their results
+  //   def ~+[T](q: Parser[Option[T]]) = p ~ q ^^ { case a ~ b => a + b.getOrElse("").toString }
+  //   def ~+[T](q: Parser[List[T]])   = p ~ q ^^ { case a ~ b => a + b.mkString }
+  //   def ~+(q: Parser[String])       = p ~ q ^^ { case a ~ b => a + b }
+  // }
 
   def eol:    PS = "\r".? ~> "\n"
   def spaces: PS = regex("""[ \t]*""".r)
@@ -35,8 +32,8 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
 
   /* This parser is one of the most useful: */
   def surrounded(left: PS, right: PS, inner: PS = char, offset: String = "") = {
-    left ~+ (guard(not(right)) ~> inner).* ~+ right ^^ 
-    { _.replaceAllLiterally("\n"+offset, "\n") }
+    left ~ (guard(not(right)) ~> inner).* ~ right ^^ 
+    { case l ~ x ~ r => (l + x.mkString + r).replaceAllLiterally("\n"+offset, "\n") }
   }
 
   /* ### Block comments parsing */
@@ -45,12 +42,14 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
        Note that [scaladoc-style comments](http://docs.scala-lang.org/style/scaladoc.html) 
        are ignored.
   */
-  def commentStart = spaces ~+ (lang.comment.start ^^ { _.replaceAll(".", " ") }) ~+ 
-    (((spaces ~ guard(eol)) ^^^ "") | // if the first row is empty, ignore it
-     (guard(not("*")) ~> " ".?))      // not scaladoc and an optional space
+  def commentStart: PS = 
+    spaces ~ (lang.comment.start ^^ { _.replaceAll(".", " ") }) ~ 
+    (((spaces ~ guard(eol)) ^^^ None) | // if the first row is empty, ignore it
+     (guard(not("*")) ~> " ".?)) ^^     // not scaladoc and an optional space
+    { case sps ~ strt ~ sp => sps + strt + sp.getOrElse("") }
 
   /* - Closing comment brace is just ignored */
-  def commentEnd = spaces ~ lang.comment.end ^^^ ""
+  def commentEnd: PS = spaces ~ lang.comment.end ^^^ ""
 
   /* - Comments can look like this:
 
@@ -112,7 +111,7 @@ case class LiteratorParsers(val lang: Language) extends RegexParsers {
      transform it to markdown, surrounding code blocks 
      with markdown backticks syntax.
   */
-  def chunk: Parser[Chunk] = code | comment
+  def chunk: Parser[Chunk] = (code: Parser[Chunk]) | (comment: Parser[Chunk])
 
   def source: Parser[List[Chunk]] =
     (emptyLine.* ~> chunk).* <~ emptyLine.*

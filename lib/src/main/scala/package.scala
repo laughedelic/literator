@@ -69,7 +69,7 @@ package object lib {
               val parsed = literator.parseAll(literator.markdown, child.read) 
 
               parsed match {
-                case literator.NoSuccess(msg, _) => Some(child + " " + parsed)
+                case literator.NoSuccess(msg, _) => Some(s"${child} ${parsed}")
                 case literator.Success(result, _) => {
                   val text = Seq(result, index, linksList) mkString "\n\n"
 

@@ -1,13 +1,13 @@
 lazy val commonSettings: Seq[Setting[_]] =
   Nice.scalaProject ++
-  // Comment our this line to publish to Era7 repository:
+  // Comment out this line to publish to Era7 repository:
   // bintrayPublishSettings ++
   Seq[Setting[_]](
-    Literator.docsMap := Map(),
-    cleanFiles += file("docs/src/"), //Literator.docsOutputDirs.value,
+    // docsMap := Map(),
+    // cleanFiles += file("docs/src/"), //Literator.docsOutputDirs.value,
     homepage := Some(url("https://github.com/laughedelic/literator")),
     organization := "laughedelic",
-    scalaVersion := "2.10.4",
+    scalaVersion := "2.10.5",
     publishBucketSuffix := "era7.com",
     GithubRelease.assets := Seq()
   )
@@ -19,7 +19,5 @@ lazy val plugin = project settings(commonSettings: _*) dependsOn lib
 
 // root project is only for aggregating:
 commonSettings
-
 publish := {}
-
-Literator.docsMap := Map()
+docsMap := Map()

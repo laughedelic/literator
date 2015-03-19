@@ -85,11 +85,6 @@ For testing within sbt 'run <args>' will execute this app
 ```
 
 
-------
 
-### Index
 
-+ scala
-  + [LiteratorApp.scala][LiteratorApp.scala]
-
-[LiteratorApp.scala]: LiteratorApp.scala.md
+[main/scala/LiteratorApp.scala]: LiteratorApp.scala.md

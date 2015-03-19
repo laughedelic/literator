@@ -1,5 +1,6 @@
-/* ## Literator SBT Pluging */
+## Literator SBT Pluging
 
+```scala
 package laughedelic.literator.plugin
 
 import sbt._
@@ -46,3 +47,10 @@ object LiteratorPlugin extends AutoPlugin {
   )
 
 }
+
+```
+
+
+
+
+[main/scala/LiteratorPlugin.scala]: LiteratorPlugin.scala.md

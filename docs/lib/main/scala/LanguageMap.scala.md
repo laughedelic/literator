@@ -33,18 +33,11 @@ object LanguageMap {
 ```
 
 
-------
 
-### Index
 
-+ scala
-  + [FileUtils.scala][FileUtils.scala]
-  + [LanguageMap.scala][LanguageMap.scala]
-  + [LiteratorParsers.scala][LiteratorParsers.scala]
-  + [package.scala][package.scala]
-
-[FileUtils.scala]: FileUtils.scala.md
-[LanguageMap.scala]: LanguageMap.scala.md
-[LiteratorParsers.scala]: LiteratorParsers.scala.md
-[package.scala]: package.scala.md
-[Readme.md]: Readme.md.md
+[main/scala/FileUtils.scala]: FileUtils.scala.md
+[main/scala/LanguageMap.scala]: LanguageMap.scala.md
+[main/scala/LiteratorParsers.scala]: LiteratorParsers.scala.md
+[main/scala/package.scala]: package.scala.md
+[main/scala/Readme.md]: Readme.md.md
+[test/scala/Test.scala]: ../../test/scala/Test.scala.md
