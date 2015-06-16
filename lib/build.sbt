@@ -12,4 +12,4 @@ description := "A simple library which converts sources to markdown"
 //   }
 // }
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % Test
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.5" % Test
