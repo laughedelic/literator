@@ -8,4 +8,4 @@ addSbtPlugin("me.lessis" % "bintray-sbt" % "0.3.0")
 
 
 // itself for testing:
-addSbtPlugin("laughedelic" % "literator-plugin" % "0.7.0-SNAPSHOT")
+// addSbtPlugin("laughedelic" % "literator-plugin" % "0.7.0-SNAPSHOT")

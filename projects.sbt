@@ -12,8 +12,8 @@ lazy val commonSettings: Seq[Setting[_]] =
   )
 
 // subprojects:
-lazy val lib = project settings(commonSettings: _*) disablePlugins(BintrayPlugin)
-lazy val plugin = project settings(commonSettings: _*) dependsOn lib disablePlugins(BintrayPlugin)
+lazy val lib = project settings(commonSettings: _*) //disablePlugins(BintrayPlugin)
+lazy val plugin = project settings(commonSettings: _*) dependsOn lib //disablePlugins(BintrayPlugin)
 
 // root project is only for aggregating:
 commonSettings
