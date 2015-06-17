@@ -11,57 +11,24 @@ The tool is written in Scala and first of all for Scala, because it doesn't have
 
 If you're wondering, why don't I use docco instead, see my answer [at the bottom](#why-not-docco) of this file.
 
-Literator consists of two components:
-
-- Library
-- Sbt plugin
-
-Before `v0.7.0` there was also a command line application.
-
-
-## Library
-
-If you want to use the library in your Scala code, first, add the [bintray-sbt](https://github.com/softprops/bintray-sbt) plugin to `project/plugins.sbt`:
-
-```scala
-addSbtPlugin("me.lessis" % "bintray-sbt" % "0.3.0")
-```
-
-dependency to your `build.sbt`:
-
-```scala
-resolvers += "laughedelic maven releases" at "http://dl.bintray.com/laughedelic/maven"
-
-libraryDependencies += "laughedelic" %% "literator-lib" % "<version>"
-```
-
-Then you can use `literate` method of `File` to generate docs for your sources. For example:
-
-```scala
-import laughedelic.literator.lib._
-
-new File("src/main/scala/").literate(Some(new File("docs/src/")))
-```
+> Note: Before `v0.7.0` there was a separate library, command line application and an sbt-plugin.
 
 Some nice features:
 
 - it provides convenient list of links definitions for internal references
 - it (optionally) generates index of the files in the given directory and appends it to each produced markdown file
 
-See [its source documentation][docs/lib/main/scala/] for more details.
 
-
-## Sbt plugin
+## Sbt dependency
 
 To use this tool from sbt console, add the following to your `project/plugins.sbt`:
 
 ```scala
 resolvers ++= Seq(
-  "laughedelic maven releases" at "http://dl.bintray.com/laughedelic/maven",
   Resolver.url("laughedelic sbt-plugins", url("http://dl.bintray.com/laughedelic/sbt-plugins"))(Resolver.ivyStylePatterns)
 )
 
-addSbtPlugin("laughedelic" % "literator-plugin" % "<version>")
+addSbtPlugin("laughedelic" % "literator" % "<version>")
 ```
 
 You can set `Literator.docsMap` key in your `build.sbt`, which contains `Map[File, File]` mapping between source directories and output documentation directories. By default it's just `Map(file("src/") -> file("docs/src/"))`. Using this map you can easily generate docs for several subprojects (like in Literator itself).
@@ -69,6 +36,8 @@ You can set `Literator.docsMap` key in your `build.sbt`, which contains `Map[Fil
 To run Literator from sbt, use `generateDocs` task.
 
 Output directories are cleaned up before generating docs (you can turn it off with `docsCleanBefore := false`)
+
+> TODO: list all settings in a table
 
 
 ### Release process integration
@@ -78,7 +47,7 @@ If you use [sbt-release](https://github.com/sbt/sbt-release) plugin, you can add
 
 ## Demo/Documentation
 
-You can see the result of running Literator on its own sources in the [docs/](docs/) folder.
+You can see the result of running Literator on its own sources in the [docs/src/](docs/src/) folder.
 
 
 ## FAQ

@@ -1,4 +1,5 @@
 - Command line application is removed, because (according to bintray) nobody uses it anyway
+- Library and sbt-plugin are merged into one project (because sbt multiproject is a mess)
 - Index is not appended by default now (you can turn it on with `docsAddIndex := true`)
 - Output directories are cleaned up before generating docs (you can turn it off with `docsCleanBefore := false`)
-- literator-plugin is now an auto plugin
+- literator-plugin is renamed to just literator and is now an auto plugin

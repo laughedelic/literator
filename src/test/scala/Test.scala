@@ -6,8 +6,7 @@ import org.scalatest._
 
 class SelfDocumentSuite extends FunSuite {
   test("Run itself on itself's source") {
-    val errors = file("lib/src/main/scala/").literate(Some(file("docs/src/lib"))) ++
-                 file("plugin/src/main/scala/").literate(Some(file("docs/src/plugin")))
+    val errors = file("src/main/scala/").literate(Some(file("docs/src/")))
     assert(errors.isEmpty, errors mkString "\n")
   }
 }
