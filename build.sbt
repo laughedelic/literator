@@ -14,3 +14,6 @@ bintrayRepository in bintray := "sbt-plugins"
 bintrayOrganization in bintray := None
 // comment out this line to publish it to bintray
 disablePlugins(BintrayPlugin)
+
+// this is covered by the test
+generateDocs := {}
