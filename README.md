@@ -24,9 +24,10 @@ Some nice features:
 To use this tool from sbt console, add the following to your `project/plugins.sbt`:
 
 ```scala
-resolvers ++= Seq(
-  Resolver.url("laughedelic sbt-plugins", url("http://dl.bintray.com/laughedelic/sbt-plugins"))(Resolver.ivyStylePatterns)
-)
+resolvers += Resolver.url(
+  "laughedelic sbt-plugins",
+  url("http://dl.bintray.com/laughedelic/sbt-plugins")
+)(Resolver.ivyStylePatterns)
 
 addSbtPlugin("laughedelic" % "literator" % "<version>")
 ```
