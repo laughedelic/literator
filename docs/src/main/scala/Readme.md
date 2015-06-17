@@ -6,9 +6,10 @@ This directory contains sources of the literator library.
 - [LanguageMap.scala][] defines a set of supported languages with the corresponding comment marks
 
 
-[main/scala/FileUtils.scala]: FileUtils.scala.md
-[main/scala/LanguageMap.scala]: LanguageMap.scala.md
-[main/scala/LiteratorParsers.scala]: LiteratorParsers.scala.md
-[main/scala/package.scala]: package.scala.md
+[main/scala/lib/FileUtils.scala]: lib/FileUtils.scala.md
+[main/scala/lib/LanguageMap.scala]: lib/LanguageMap.scala.md
+[main/scala/lib/LiteratorParsers.scala]: lib/LiteratorParsers.scala.md
+[main/scala/lib/package.scala]: lib/package.scala.md
+[main/scala/plugin/LiteratorPlugin.scala]: plugin/LiteratorPlugin.scala.md
 [main/scala/Readme.md]: Readme.md.md
 [test/scala/Test.scala]: ../../test/scala/Test.scala.md

@@ -53,4 +53,10 @@ object LiteratorPlugin extends AutoPlugin {
 
 
 
-[main/scala/LiteratorPlugin.scala]: LiteratorPlugin.scala.md
+[main/scala/lib/FileUtils.scala]: ../lib/FileUtils.scala.md
+[main/scala/lib/LanguageMap.scala]: ../lib/LanguageMap.scala.md
+[main/scala/lib/LiteratorParsers.scala]: ../lib/LiteratorParsers.scala.md
+[main/scala/lib/package.scala]: ../lib/package.scala.md
+[main/scala/plugin/LiteratorPlugin.scala]: LiteratorPlugin.scala.md
+[main/scala/Readme.md]: ../Readme.md.md
+[test/scala/Test.scala]: ../../../test/scala/Test.scala.md
