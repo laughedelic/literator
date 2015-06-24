@@ -31,18 +31,20 @@ You can find the latest version in the list of [releases](https://github.com/lau
 
 ### Setting keys
 
-|               Key |       Type        | Default                                  |
-|------------------:|:-----------------:|:-----------------------------------------|
-|         `docsMap` | `Map[File, File]` | `Map(file("src/") -> file("docs/src/"))` |
-|  `docsOutputDirs` |    `Seq[File]`    | see [below](#credentials)                |
-|    `docsAddIndex` |     `Boolean`     | `false`                                  |
-| `docsCleanBefore` |     `Boolean`     | `true`                                   |
+|               Key |       Type        | Default                  |
+|------------------:|:-----------------:|:-------------------------|
+|         `docsMap` | `Map[File, File]` | `src/` → `docs/src/`     |
+|  `docsOutputDirs` |    `Seq[File]`    | same as `docsMap` values |
+|    `docsAddIndex` |     `Boolean`     | `false`                  |
+| `docsCleanBefore` |     `Boolean`     | `true`                   |
 
 You can set `docsMap` key in your `build.sbt` to map source directories to output documentation directories. Using this map you can easily generate docs for several subprojects or integrate certain parts of the source documentation in the general docs (especially if you're using some service like [Read the Docs](https://readthedocs.org)).
 
 To run Literator from sbt, use `generateDocs` task.
 
 Note that output directories are _cleaned up_ before generating docs (you can turn it off with `docsCleanBefore := false`), so be careful if you're mixing generated docs with handwritten.
+
+> TODO: write about index and internal links usage
 
 
 ### Release process integration
