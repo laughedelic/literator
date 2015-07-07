@@ -19,26 +19,32 @@ Some nice features:
 - it (optionally) generates index of the files in the given directory and appends it to each produced markdown file
 
 
-## Sbt dependency
+## Usage
 
-To use this tool from sbt console, add the following to your `project/plugins.sbt`:
+Just add following line to your `project/plugins.sbt`:
 
 ```scala
-resolvers += Resolver.url(
-  "laughedelic sbt-plugins",
-  url("http://dl.bintray.com/laughedelic/sbt-plugins")
-)(Resolver.ivyStylePatterns)
-
 addSbtPlugin("laughedelic" % "literator" % "<version>")
 ```
 
-You can set `Literator.docsMap` key in your `build.sbt`, which contains `Map[File, File]` mapping between source directories and output documentation directories. By default it's just `Map(file("src/") -> file("docs/src/"))`. Using this map you can easily generate docs for several subprojects (like in Literator itself).
+You can find the latest version in the list of [releases](https://github.com/laughedelic/literator/releases).
+
+### Setting keys
+
+|               Key |       Type        | Default                  |
+|------------------:|:-----------------:|:-------------------------|
+|         `docsMap` | `Map[File, File]` | `src/` → `docs/src/`     |
+|  `docsOutputDirs` |    `Seq[File]`    | same as `docsMap` values |
+|    `docsAddIndex` |     `Boolean`     | `false`                  |
+| `docsCleanBefore` |     `Boolean`     | `true`                   |
+
+You can set `docsMap` key in your `build.sbt` to map source directories to output documentation directories. Using this map you can easily generate docs for several subprojects or integrate certain parts of the source documentation in the general docs (especially if you're using some service like [Read the Docs](https://readthedocs.org)).
 
 To run Literator from sbt, use `generateDocs` task.
 
-Output directories are cleaned up before generating docs (you can turn it off with `docsCleanBefore := false`)
+Note that output directories are _cleaned up_ before generating docs (you can turn it off with `docsCleanBefore := false`), so be careful if you're mixing generated docs with handwritten.
 
-> TODO: list all settings in a table
+> TODO: write about index and internal links usage
 
 
 ### Release process integration
@@ -46,9 +52,55 @@ Output directories are cleaned up before generating docs (you can turn it off wi
 If you use [sbt-release](https://github.com/sbt/sbt-release) plugin, you can add docs generation step. See sbt-release documentation for details.
 
 
-## Demo/Documentation
+## Example/Demo
+
+If you have a piece of code like this (it's from the literator sources):
+
+```scala
+/* ### Block comments parsing */
+
+/* - When parsing the comment opening brace, we remember the offset for the content
+     Note that [scaladoc-style comments](http://docs.scala-lang.org/style/scaladoc.html)
+     are ignored.
+*/
+def commentStart: PS =
+  spaces ~ (lang.comment.start ^^ { _.replaceAll(".", " ") }) ~
+  (((spaces ~ guard(eol)) ^^^ None) | // if the first row is empty, ignore it
+   (guard(not("*")) ~> " ".?)) ^^     // not scaladoc and an optional space
+  { case sps ~ strt ~ sp => sps + strt + sp.getOrElse("") }
+
+/* - Closing comment brace is just ignored */
+def commentEnd: PS = spaces ~ lang.comment.end ^^^ ""
+```
+
+Then it will be transformed into the following markdown:
+
+----
+
+### Block comments parsing
+
+- When parsing the comment opening brace, we remember the offset for the content
+  Note that [scaladoc-style comments](http://docs.scala-lang.org/style/scaladoc.html)
+  are ignored.
+
+```scala
+def commentStart: PS =
+  spaces ~ (lang.comment.start ^^ { _.replaceAll(".", " ") }) ~
+  (((spaces ~ guard(eol)) ^^^ None) | // if the first row is empty, ignore it
+   (guard(not("*")) ~> " ".?)) ^^     // not scaladoc and an optional space
+  { case sps ~ strt ~ sp => sps + strt + sp.getOrElse("") }
+```
+
+- Closing comment brace is just ignored
+
+```scala
+def commentEnd: PS = spaces ~ lang.comment.end ^^^ ""
+```
+
+----
 
 You can see the result of running Literator on its own sources in the [docs/src/](docs/src/) folder.
+
 
 
 ## FAQ
