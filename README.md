@@ -1,7 +1,12 @@
 Literator
 =========
 
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/laughedelic/literator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![](https://travis-ci.org/laughedelic/literator.svg?branch=master)](https://travis-ci.org/laughedelic/literator)
+<!-- [![](https://img.shields.io/codacy/c2832c4f21654f1083c95a5bcc202119.svg)](https://www.codacy.com/app/laughedelic/literator) -->
+[![](http://github-release-version.herokuapp.com/github/laughedelic/literator/release.svg)](https://github.com/laughedelic/literator/releases/latest)
+[![](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://www.tldrlegal.com/l/agpl-3.0)
+[![](https://img.shields.io/badge/contact-gitter_chat-dd1054.svg)](https://gitter.im/laughedelic/literator)
+
 
 This is a simple tool, which **transforms your sources into markdown documentations for themselves**. It just reads a source file, turns block comments into normal text and surrounds code with markdown backticks syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. The name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not really supported by the language.
 
