@@ -108,11 +108,15 @@ You can see the result of running Literator on its own sources in the [docs/src/
 
 ## FAQ
 
+#### Is this project alive?
+
+Yes, don't look that there were no recent commits, it's just quite stable. In [@ohnosequences](https://github.com/ohnosequences) we use this tool in everyday development and as a part of the release process.
+
 #### Why not docco?
 
-Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like tools, which generate htmls from your sources (also using markdown), but there are several reasons, why I don't like them.
+Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like tools, which generate htmls from your sources (also using markdown), but there are several reasons, why I don't like them:
 
-- first of all, there is no normal Scala-clone of such tool and this is not nice, because I want to integrate this into normal release process of the Scala projects I develop;
-- secondly, I want to keep things simple, and I like markdown as an "intermediate" format, for example it's handy to have just markdown documents on github, as it will render them nicely, and then generate from them htmls for a web-site, if needed, using your favourite tool and templates;
-- finally, most of such tools support only one-line comments and ignore block comments, while I want the opposite: write comments as a normal text and have ignored small comments in code;
-- and yes, it's "quick and dirty" — I don't like such things, better to have something simple, but nice.
+- there is no normal Scala-clone of such tool that you could integrate in the release process
+- most of such tools support only one-line comments and ignore block comments, while the opposite makes more sense: write documentation comments as normal text and keep small technical comments inlined
+- those tools claim to be "quick and dirty", IMO better to have something simple, but reliable
+- Literator helps to keep things simple using markdown which is good as an intermediate format. For example, it's handy to have just markdown documents on github, as it will render them nicely and then generate from them htmls for a web-site if needed using your favorite tool and style templates
