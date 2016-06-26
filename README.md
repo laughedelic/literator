@@ -7,14 +7,11 @@ Literator
 [![](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://www.tldrlegal.com/l/agpl-3.0)
 [![](https://img.shields.io/badge/contact-gitter_chat-dd1054.svg)](https://gitter.im/laughedelic/literator)
 
-
 This is a simple tool, which **transforms your sources into markdown documentations for themselves**. It just reads a source file, turns block comments into normal text and surrounds code with markdown backticks syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. The name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not really supported by the language.
 
-So you can write your code and use markdown syntax in comments (which keeps your sources readable), and then transform it to a markdown document, from which you can generate a nice _html_ or _pdf_ or whatever else, using [your favourite markdown processor](http://johnmacfarlane.net/pandoc/).
+So you can write your code and use markdown syntax in comments (which keeps your sources readable), and then transform it to a markdown document, from which you can generate a nice _html_ or _pdf_ or whatever else, using [your favorite markdown processor](http://johnmacfarlane.net/pandoc/).
 
-The tool is written in Scala and first of all for Scala, because it doesn't have normal support for literate programming. But it should work for [some other languages][lib/LanguageMap] — ~~randomly chosen~~ the most popular, of course. [Open an issue](https://github.com/laughedelic/literator/issues/new), if you want support for something else.
-
-If you're wondering, why don't I use docco instead, see my answer [at the bottom](#why-not-docco) of this file.
+The tool is written in Scala and first of all _for_ Scala, because it doesn't have normal support for literate programming. But it should work for [some other languages][lib/LanguageMap] — ~~randomly chosen~~ the most popular, of course. [Open an issue](https://github.com/laughedelic/literator/issues/new), if you want support for something else.
 
 > Note: Before `v0.7.0` there was a separate library, command line application and an sbt-plugin.
 
@@ -34,6 +31,7 @@ addSbtPlugin("laughedelic" % "literator" % "<version>")
 
 You can find the latest version in the list of [releases](https://github.com/laughedelic/literator/releases).
 
+
 ### Setting keys
 
 |               Key |       Type        | Default                  |
@@ -49,7 +47,7 @@ To run Literator from sbt, use `generateDocs` task.
 
 Note that output directories are _cleaned up_ before generating docs (you can turn it off with `docsCleanBefore := false`), so be careful if you're mixing generated docs with handwritten.
 
-> TODO: write about index and internal links usage
+<!-- TODO: write about index and internal links usage -->
 
 
 ### Release process integration
