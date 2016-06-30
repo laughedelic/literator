@@ -1,8 +1,8 @@
 Literator
 =========
 
-[![](https://travis-ci.org/laughedelic/literator.svg?branch=master)](https://travis-ci.org/laughedelic/literator)
 <!-- [![](https://img.shields.io/codacy/c2832c4f21654f1083c95a5bcc202119.svg)](https://www.codacy.com/app/laughedelic/literator) -->
+[![](https://travis-ci.org/laughedelic/literator.svg?branch=master)](https://travis-ci.org/laughedelic/literator)
 [![](http://github-release-version.herokuapp.com/github/laughedelic/literator/release.svg)](https://github.com/laughedelic/literator/releases/latest)
 [![](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://www.tldrlegal.com/l/agpl-3.0)
 [![](https://img.shields.io/badge/contact-gitter_chat-dd1054.svg)](https://gitter.im/laughedelic/literator)
