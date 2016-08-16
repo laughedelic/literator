@@ -120,3 +120,10 @@ Of course, there are plenty of [docco](http://jashkenas.github.io/docco/)-like t
 - most of such tools support only one-line comments and ignore block comments, while the opposite makes more sense: write documentation comments as normal text and keep small technical comments inlined
 - those tools claim to be "quick and dirty", IMO better to have something simple, but reliable
 - Literator helps to keep things simple using markdown which is good as an intermediate format. For example, it's handy to have just markdown documents on github, as it will render them nicely and then generate from them htmls for a web-site if needed using your favorite tool and style templates
+
+#### Related projects
+
+There are a couple of interesting projects which approach literate programming in Scala from another side:
+
+* [tut](https://github.com/tpolecat/tut) reads markdown files and _interprets_ Scala code in `tut` sheds
+* [sbt-scaliterate](https://github.com/wookietreiber/sbt-scaliterate) generates Scala source code from a _programming book_ written in markdown
