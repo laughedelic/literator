@@ -11,7 +11,7 @@ This is a simple tool, which **transforms your sources into markdown documentati
 
 So you can write your code and use markdown syntax in comments (which keeps your sources readable), and then transform it to a markdown document, from which you can generate a nice _html_ or _pdf_ or whatever else, using [your favorite markdown processor](http://johnmacfarlane.net/pandoc/).
 
-The tool is written in Scala and first of all _for_ Scala, because it doesn't have normal support for literate programming. But it should work for [some other languages][lib/LanguageMap] — ~~randomly chosen~~ the most popular, of course. [Open an issue](https://github.com/laughedelic/literator/issues/new), if you want support for something else.
+The tool is written in Scala and first of all _for_ Scala, because it doesn't have normal support for literate programming. But it should work for [some other languages](docs/src/main/scala/lib/LanguageMap.scala.md) — ~~randomly chosen~~ the most popular, of course. [Open an issue](https://github.com/laughedelic/literator/issues/new), if you want support for something else.
 
 > Note: Before `v0.7.0` there was a separate library, command line application and an sbt-plugin.
 
