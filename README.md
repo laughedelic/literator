@@ -7,18 +7,18 @@ Literator
 [![](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://www.tldrlegal.com/l/agpl-3.0)
 [![](https://img.shields.io/badge/contact-gitter_chat-dd1054.svg)](https://gitter.im/laughedelic/literator)
 
-This is a simple tool, which **transforms your sources into markdown documentations for themselves**. It just reads a source file, turns block comments into normal text and surrounds code with markdown backticks syntax. So the aim is just to get a readable document from a code, which is written in more or less [literate programming](http://en.wikipedia.org/wiki/Literate_programming) style. The name is like "a thing which makes your sources literate", i.e. helps to use literate programming when it's not really supported by the language.
+##### Generate literate-style markdown docs from your sources
 
-So you can write your code and use markdown syntax in comments (which keeps your sources readable), and then transform it to a markdown document, from which you can generate a nice _html_ or _pdf_ or whatever else, using [your favorite markdown processor](http://johnmacfarlane.net/pandoc/).
+Literator produces a readable document from your code, i.e to helps you to use [literate programming](http://en.wikipedia.org/wiki/Literate_programming) when it's not supported by the language itself.
 
-The tool is written in Scala and first of all _for_ Scala, because it doesn't have normal support for literate programming. But it should work for [some other languages](docs/src/lib/LanguageMap.scala.md). [Open an issue](https://github.com/laughedelic/literator/issues/new), if you want support for something else.
+You can write your code using markdown syntax in _block comments_ and then transform it to a markdown document. Then you can generate a nice _html_ or _pdf_ or whatever else, using your favorite markdown processor (for example [Pandoc](http://pandoc.org)).
 
-> Note: Before `v0.7.0` there was a separate library, command line application and an sbt-plugin.
+Literator is written in Scala and first of all _for Scala_, but it should work for [some other languages](docs/src/lib/LanguageMap.scala.md) as well. [Open an issue](https://github.com/laughedelic/literator/issues/new), if you want support for something else.
 
 Some extra features:
 
-- it provides convenient list of links definitions for internal references
-- it (optionally) generates index of the files in the given directory and appends it to each produced markdown file
+- generates a list of link definitions for references between files
+- generates a tree-index of the files and (optionally) appends it to each produced markdown file
 
 
 ## Usage
@@ -57,7 +57,7 @@ Note that output directories are _cleaned up_ before generating docs (you can tu
 If you use [sbt-release](https://github.com/sbt/sbt-release) plugin, you can add docs generation step. See sbt-release documentation for details.
 
 
-## Example/Demo
+## Example
 
 If you have a piece of code like this (it's from the literator sources):
 
