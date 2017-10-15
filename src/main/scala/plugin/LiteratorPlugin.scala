@@ -26,13 +26,13 @@ object LiteratorPlugin extends AutoPlugin {
     docsOutputDirs := docsMap.value.values.toSeq,
     docsAddIndex := false,
     docsCleanBefore := true,
-    generateDocs := { 
+    generateDocs := {
       val s: TaskStreams = streams.value
       docsMap.value map { case (in, out) =>
-        s.log.info("Generating documentation for " + in)
+        s.log.info(s"Generating documentation for ${in}")
 
         if(docsCleanBefore.value && out.exists) {
-          s.log.info("Cleaning up output directory " + out)
+          s.log.info(s"Cleaning up output directory ${out}")
           Defaults.doClean(Seq(out), Seq())
         }
 
@@ -40,7 +40,7 @@ object LiteratorPlugin extends AutoPlugin {
         errors foreach { s.log.error(_) }
 
         if (errors.nonEmpty) sys.error("Couldn't generate documentation due to parsing errors")
-        else s.log.info("Documentation is written to  " + out)
+        else s.log.info(s"Documentation is written to ${out}")
       }
     }
   )
