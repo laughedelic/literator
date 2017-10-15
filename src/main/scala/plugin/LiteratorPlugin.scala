@@ -33,7 +33,7 @@ object LiteratorPlugin extends AutoPlugin {
 
         if(docsCleanBefore.value && out.exists) {
           s.log.info(s"Cleaning up output directory ${out}")
-          Defaults.doClean(Seq(out), Seq())
+          IO.delete(Seq(out))
         }
 
         val errors = in.literate(Some(out), withIndex = docsAddIndex.value)

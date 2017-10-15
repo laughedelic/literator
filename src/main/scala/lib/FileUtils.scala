@@ -4,8 +4,6 @@ package laughedelic.literator.lib
 
 import java.io._
 import java.nio.file.Path
-import java.nio.file.Path._
-import LanguageMap._
 
 /* This type represents a node of file hierarchy tree */
 case class FileNode(f: File, t: List[FileNode]) {
@@ -18,7 +16,7 @@ case class FileNode(f: File, t: List[FileNode]) {
   def listTree(base: File): List[String] = {
     s"+ ${link(base)}" ::
     t.flatMap { i: FileNode =>
-      i.listTree(base).map { str => s"  ${str}" } 
+      i.listTree(base).map { str => s"  ${str}" }
     }
   }
 
