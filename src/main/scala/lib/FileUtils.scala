@@ -12,12 +12,14 @@ case class FileNode(f: File, t: List[FileNode]) {
   import FileUtils._
 
   def link(base: File): String =
-    if (f.isSource) "["+f.name+"]["+f.relativePath(base)+"]"
+    if (f.isSource) s"[${f.name}][${f.relativePath(base)}]"
     else f.name
 
   def listTree(base: File): List[String] = {
-    ("+ " + link(base)) :: 
-    t.flatMap{ i: FileNode => i.listTree(base).map{ s: String => "  " + s } }
+    s"+ ${link(base)}" ::
+    t.flatMap { i: FileNode =>
+      i.listTree(base).map { str => s"  ${str}" } 
+    }
   }
 
   override def toString: String = listTree(f).mkString("\n")
@@ -33,7 +35,7 @@ object FileUtils {
 
     /* Returning path of `file` relatively to `base` */
     def relativePath(base: File): Path = {
-      val b = if (base.isDirectory) base.getCanonicalFile 
+      val b = if (base.isDirectory) base.getCanonicalFile
               else base.getCanonicalFile.getParentFile
       b.toPath.relativize(file.getCanonicalFile.toPath)
     }
@@ -50,8 +52,8 @@ object FileUtils {
     /* Traversing recursively and building file hierarchy tree */
     def getFileTree(filter: (File => Boolean) = (_ => true)): Option[FileNode] =
       if (!filter(file)) None
-      else Some(FileNode(file, 
-            if (file.isDirectory) file.listFiles.toList.map(_.getFileTree(filter)).flatten 
+      else Some(FileNode(file,
+            if (file.isDirectory) file.listFiles.toList.map(_.getFileTree(filter)).flatten
             else List()
            ))
 
