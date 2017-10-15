@@ -27,21 +27,21 @@ object LiteratorPlugin extends AutoPlugin {
     docsOutputDirs := docsMap.value.values.toSeq,
     docsAddIndex := false,
     docsCleanBefore := true,
-    generateDocs := { 
+    generateDocs := {
       val s: TaskStreams = streams.value
       docsMap.value map { case (in, out) =>
-        s.log.info("Generating documentation for " + in)
+        s.log.info(s"Generating documentation for ${in}")
 
         if(docsCleanBefore.value && out.exists) {
-          s.log.info("Cleaning up output directory " + out)
-          Defaults.doClean(Seq(out), Seq())
+          s.log.info(s"Cleaning up output directory ${out}")
+          IO.delete(Seq(out))
         }
 
         val errors = in.literate(Some(out), withIndex = docsAddIndex.value)
         errors foreach { s.log.error(_) }
 
         if (errors.nonEmpty) sys.error("Couldn't generate documentation due to parsing errors")
-        else s.log.info("Documentation is written to  " + out)
+        else s.log.info(s"Documentation is written to ${out}")
       }
     }
   )
@@ -51,12 +51,22 @@ object LiteratorPlugin extends AutoPlugin {
 ```
 
 
+------
 
+### Index
 
-[main/scala/lib/FileUtils.scala]: ../lib/FileUtils.scala.md
-[main/scala/lib/LanguageMap.scala]: ../lib/LanguageMap.scala.md
-[main/scala/lib/LiteratorParsers.scala]: ../lib/LiteratorParsers.scala.md
-[main/scala/lib/package.scala]: ../lib/package.scala.md
-[main/scala/plugin/LiteratorPlugin.scala]: LiteratorPlugin.scala.md
-[main/scala/Readme.md]: ../Readme.md.md
-[test/scala/Test.scala]: ../../../test/scala/Test.scala.md
++ scala
+  + lib
+    + [FileUtils.scala][lib/FileUtils.scala]
+    + [LanguageMap.scala][lib/LanguageMap.scala]
+    + [LiteratorParsers.scala][lib/LiteratorParsers.scala]
+    + [package.scala][lib/package.scala]
+  + plugin
+    + [LiteratorPlugin.scala][plugin/LiteratorPlugin.scala]
+
+[lib/FileUtils.scala]: ../lib/FileUtils.scala.md
+[lib/LanguageMap.scala]: ../lib/LanguageMap.scala.md
+[lib/LiteratorParsers.scala]: ../lib/LiteratorParsers.scala.md
+[lib/package.scala]: ../lib/package.scala.md
+[plugin/LiteratorPlugin.scala]: LiteratorPlugin.scala.md
+[Readme.md]: ../Readme.md.md
