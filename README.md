@@ -31,6 +31,8 @@ addSbtPlugin("laughedelic" % "literator" % "<version>")
 
 (see the latest release version on the badge above)
 
+> Note that since `v0.8.0` this plugin is published **only for sbt-1.x**. If you need it for sbt-0.13, use [`v0.7.1`](https://github.com/laughedelic/literator/tree/v0.7.1).
+
 To run Literator from sbt, use `generateDocs` task.
 
 
