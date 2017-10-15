@@ -1,0 +1,1 @@
+This release just fixes problems with resolving artifacts from Bintray. It doesn't have any significant changes since 0.7.0.
