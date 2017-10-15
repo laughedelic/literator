@@ -3,6 +3,7 @@ description  := "An sbt plugin which converts sources to markdown"
 organization := "laughedelic"
 
 sbtPlugin := true
+sbtVersion := "0.13.16"
 scalaVersion := "2.10.6"
 
 libraryDependencies ++= Seq(
