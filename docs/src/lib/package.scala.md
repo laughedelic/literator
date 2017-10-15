@@ -112,12 +112,22 @@ And if we parsed something, we write it to the file
 ```
 
 
+------
 
+### Index
 
-[main/scala/lib/FileUtils.scala]: FileUtils.scala.md
-[main/scala/lib/LanguageMap.scala]: LanguageMap.scala.md
-[main/scala/lib/LiteratorParsers.scala]: LiteratorParsers.scala.md
-[main/scala/lib/package.scala]: package.scala.md
-[main/scala/plugin/LiteratorPlugin.scala]: ../plugin/LiteratorPlugin.scala.md
-[main/scala/Readme.md]: ../Readme.md.md
-[test/scala/Test.scala]: ../../../test/scala/Test.scala.md
++ scala
+  + lib
+    + [FileUtils.scala][lib/FileUtils.scala]
+    + [LanguageMap.scala][lib/LanguageMap.scala]
+    + [LiteratorParsers.scala][lib/LiteratorParsers.scala]
+    + [package.scala][lib/package.scala]
+  + plugin
+    + [LiteratorPlugin.scala][plugin/LiteratorPlugin.scala]
+
+[lib/FileUtils.scala]: FileUtils.scala.md
+[lib/LanguageMap.scala]: LanguageMap.scala.md
+[lib/LiteratorParsers.scala]: LiteratorParsers.scala.md
+[lib/package.scala]: package.scala.md
+[plugin/LiteratorPlugin.scala]: ../plugin/LiteratorPlugin.scala.md
+[Readme.md]: ../Readme.md.md

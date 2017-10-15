@@ -5,8 +5,6 @@ package laughedelic.literator.lib
 
 import java.io._
 import java.nio.file.Path
-import java.nio.file.Path._
-import LanguageMap._
 ```
 
 This type represents a node of file hierarchy tree
@@ -16,12 +14,14 @@ case class FileNode(f: File, t: List[FileNode]) {
   import FileUtils._
 
   def link(base: File): String =
-    if (f.isSource) "["+f.name+"]["+f.relativePath(base)+"]"
+    if (f.isSource) s"[${f.name}][${f.relativePath(base)}]"
     else f.name
 
   def listTree(base: File): List[String] = {
-    ("+ " + link(base)) :: 
-    t.flatMap{ i: FileNode => i.listTree(base).map{ s: String => "  " + s } }
+    s"+ ${link(base)}" ::
+    t.flatMap { i: FileNode =>
+      i.listTree(base).map { str => s"  ${str}" }
+    }
   }
 
   override def toString: String = listTree(f).mkString("\n")
@@ -43,7 +43,7 @@ Returning path of `file` relatively to `base`
 
 ```scala
     def relativePath(base: File): Path = {
-      val b = if (base.isDirectory) base.getCanonicalFile 
+      val b = if (base.isDirectory) base.getCanonicalFile
               else base.getCanonicalFile.getParentFile
       b.toPath.relativize(file.getCanonicalFile.toPath)
     }
@@ -69,8 +69,8 @@ Traversing recursively and building file hierarchy tree
 ```scala
     def getFileTree(filter: (File => Boolean) = (_ => true)): Option[FileNode] =
       if (!filter(file)) None
-      else Some(FileNode(file, 
-            if (file.isDirectory) file.listFiles.toList.map(_.getFileTree(filter)).flatten 
+      else Some(FileNode(file,
+            if (file.isDirectory) file.listFiles.toList.map(_.getFileTree(filter)).flatten
             else List()
            ))
 ```
@@ -94,12 +94,22 @@ Just writing to the file
 ```
 
 
+------
 
+### Index
 
-[main/scala/lib/FileUtils.scala]: FileUtils.scala.md
-[main/scala/lib/LanguageMap.scala]: LanguageMap.scala.md
-[main/scala/lib/LiteratorParsers.scala]: LiteratorParsers.scala.md
-[main/scala/lib/package.scala]: package.scala.md
-[main/scala/plugin/LiteratorPlugin.scala]: ../plugin/LiteratorPlugin.scala.md
-[main/scala/Readme.md]: ../Readme.md.md
-[test/scala/Test.scala]: ../../../test/scala/Test.scala.md
++ scala
+  + lib
+    + [FileUtils.scala][lib/FileUtils.scala]
+    + [LanguageMap.scala][lib/LanguageMap.scala]
+    + [LiteratorParsers.scala][lib/LiteratorParsers.scala]
+    + [package.scala][lib/package.scala]
+  + plugin
+    + [LiteratorPlugin.scala][plugin/LiteratorPlugin.scala]
+
+[lib/FileUtils.scala]: FileUtils.scala.md
+[lib/LanguageMap.scala]: LanguageMap.scala.md
+[lib/LiteratorParsers.scala]: LiteratorParsers.scala.md
+[lib/package.scala]: package.scala.md
+[plugin/LiteratorPlugin.scala]: ../plugin/LiteratorPlugin.scala.md
+[Readme.md]: ../Readme.md.md
