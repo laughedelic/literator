@@ -6,6 +6,7 @@ Literator
 [![](https://img.shields.io/github/release/laughedelic/literator.svg)](https://github.com/laughedelic/literator/releases/latest)
 [![](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://www.tldrlegal.com/l/agpl-3.0)
 [![](https://img.shields.io/badge/contact-gitter_chat-dd1054.svg)](https://gitter.im/laughedelic/literator)
+[![Open Source Helpers](https://www.codetriage.com/laughedelic/literator/badges/users.svg)](https://www.codetriage.com/laughedelic/literator)
 
 ##### Generate literate-style markdown docs from your sources
 
